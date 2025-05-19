@@ -1,21 +1,42 @@
 {% extends 'base.html' %}
 
 {% block title %}Página Inicial{% endblock %}
-    {% block content %}
-    <section id="welcome" class="py-5">
-        <div class="container px-4">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1 class="py-2 text-center fw-bold">Bem-vindo(a)!</h1>
+{% block content %}
+<section id="welcome" class="py-5">
+    <h1 class="py-2 text-center fw-bold">Bem-vindo(a)!</h1>
+    <div class="container d-flex justify-content-center py-2">
+        <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
+            <div class="col d-flex justify-content-center">
+              <div class="card border-secondary border rounded-3" style="width: 18rem;">
+                <img src="{{ url_for('static', filename='img/adddoc.jpg') }}" class="card-img-top card-img-fix" alt="...">
+                <div class="card-body">
+                  <h5 class="card-title">Adicionar pacientes</h5><hr>
+                  <p class="card-text">Adicione um novo paciente, atribua um prontuário ao paciente</p>
+                  <a href="#" class="btn btn-primary d-flex justify-content-center">Adicione novo paciente</a>
                 </div>
-                <div class="col-md-12 px-lg-0">
-                    <div class="welcome-description mt-4 text-center">
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam expedita labore voluptatem ratione nulla modi error harum accusantium magni, rerum dolor consequatur, eius vero recusandae adipisci aut nemo quod? Sint!</p>
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam expedita labore voluptatem ratione nulla modi error harum accusantium magni, rerum dolor consequatur, eius vero recusandae adipisci aut nemo quod? Sint!</p>
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam expedita labore voluptatem ratione nulla modi error harum accusantium magni, rerum dolor consequatur, eius vero recusandae adipisci aut nemo quod? Sint!</p>
-                    </div>
+              </div>
+            </div>
+            <div class="col d-flex justify-content-center">
+              <div class="card border-secondary border rounded-3" style="width: 18rem;">
+                <img src="{{ url_for('static', filename='img/search.jpg') }}" class="card-img-top card-img-fix" alt="...">
+                <div class="card-body">
+                  <h5 class="card-title">Pesquisar pacientes</h5><hr>
+                  <p class="card-text">Pesquise pacientes, acesse seus prontuários e confira informações</p>
+                  <a href="#" class="btn btn-primary d-flex justify-content-center">Pesquise</a>
                 </div>
+              </div>
+            </div>
+            <div class="col d-flex justify-content-center">
+              <div class="card border-secondary border rounded-3" style="width: 18rem;">
+                <img src="{{ url_for('static', filename='img/myprof.jpg') }}" class="card-img-top card-img-fix" alt="...">
+                <div class="card-body">
+                  <h5 class="card-title">Meu perfil</h5><hr>
+                  <p class="card-text">Confira as informações de seu perfil</p>
+                  <a href="#" class="btn btn-primary d-flex justify-content-center">Acesse seu perfil</a>
+                </div>
+              </div>
             </div>
         </div>
-    </section>
-    {% endblock %}
+    </div>
+</section>
+{% endblock %}

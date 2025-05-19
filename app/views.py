@@ -1,9 +1,12 @@
-from flask import Blueprint, render_template
-from app import templates
+from flask import Blueprint, render_template, redirect, url_for
+from app.database import db
+from app.models import Paciente
+from app.models import User
 
 main = Blueprint('main', __name__)
 
 @main.route("/")
+@main.route("/homepage")
 def homepage():
     return render_template("homepage.html")
 
@@ -13,7 +16,8 @@ def addpaciente():
 
 @main.route('/pesquisa')
 def pesquisa():
-    return render_template('pesquisa.html')
+    pacientes = Paciente.query.all()
+    return render_template('pesquisa.html', pacientes=pacientes)
 
 @main.route('/prontuariopaciente')
 def prontuariopaciente():
@@ -31,4 +35,17 @@ def sobre():
 # Apenas para ADIMIN
 @main.route('/usuarios')
 def usuarios():
-    return render_template('usuarios.html')
+    usuarios = User.query.all()
+    return render_template('usuarios.html', usuarios=usuarios)
+
+@main.route('/adicionar_usuario')
+def addusuario():
+    return render_template('addusuario.html')
+
+@main.route('/delete_user/<int:users_id>', methods=['POST'])
+def delete_user(users_id):  # Agora usando 'users_id'
+    user = User.query.get_or_404(users_id)  # Busca o usuário pelo ID correto
+    db.session.delete(user)  # Exclui o usuário do banco
+    db.session.commit()  # Salva as alterações
+
+    return redirect(url_for('main.usuarios'))  # Redireciona para a lista de usuários

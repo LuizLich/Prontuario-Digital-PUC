@@ -6,10 +6,12 @@
     <div class="container px-4">
         <div class="row">
             <div class="col-md-12">
-                <h1 class="py-2 text-center fw-bold">Informações de usuários</h1>
+                <h1 class="py-2 text-center fw-bold">Gerenciar usuários</h1>
             </div>
             <div>
-              <button type="button" class="btn btn-success"><i class="bi bi-person-plus-fill"></i> Adicionar novo usuário</button>
+                <a href="{{ url_for('main.addusuario') }}" class="btn btn-success">
+                    <i class="bi bi-person-plus-fill"></i> Adicionar novo usuário
+                </a>
             </div>    
             <div class="table-responsive">            
                 <table id="example2" class="table table-striped table-hover table-bordered">
@@ -19,170 +21,28 @@
                             <th>Nome do usuário</th>
                             <th>Email</th>
                             <th>Telefone</th>
+                            <th>Tipo de usuário</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody>
+                        {% for user in usuarios %}
                         <tr>
-                            <td>1</td>
-                            <td>Lucas Almeida</td>
-                            <td>lucas.almeida@email.com</td>
-                            <td>(11) 91234-5678</td>
+                            <td>{{ user.users_id }}</td>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.registration }}</td>
+                            <td>{{ user.type_user }}</td>
                             <td>
                                 <button class="btn btn-primary btn-sm" title="Editar"><i class="bi bi-pencil-square"></i></button>
-                                <button class="btn btn-danger btn-sm" title="Excluir"><i class="bi bi-trash3-fill"></i></button>
+                                <form action="{{ url_for('main.delete_user', users_id=user.users_id) }}" method="POST" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger btn-sm" title="Excluir">
+                                        <i class="bi bi-trash3-fill"></i>
+                                    </button>
+                                </form>
                             </td>
                         </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Ana Beatriz</td>
-                            <td>ana.beatriz@email.com</td>
-                            <td>(21) 99876-5432</td>
-                            <td>
-                                <button class="btn btn-primary btn-sm" title="Editar"><i class="bi bi-pencil-square"></i></button>
-                                <button class="btn btn-danger btn-sm" title="Excluir"><i class="bi bi-trash3-fill"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Ricardo Freitas</td>
-                            <td>ricardo.f@email.com</td>
-                            <td>(31) 91111-2233</td>
-                            <td>
-                                <button class="btn btn-primary btn-sm" title="Editar"><i class="bi bi-pencil-square"></i></button>
-                                <button class="btn btn-danger btn-sm" title="Excluir"><i class="bi bi-trash3-fill"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>Juliana Costa</td>
-                            <td>juliana.costa@email.com</td>
-                            <td>(41) 98765-4321</td>
-                            <td>
-                                <button class="btn btn-primary btn-sm" title="Editar"><i class="bi bi-pencil-square"></i></button>
-                                <button class="btn btn-danger btn-sm" title="Excluir"><i class="bi bi-trash3-fill"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>5</td>
-                            <td>Fernando Lima</td>
-                            <td>fernando.lima@email.com</td>
-                            <td>(85) 91324-5566</td>
-                            <td>
-                                <button class="btn btn-primary btn-sm" title="Editar"><i class="bi bi-pencil-square"></i></button>
-                                <button class="btn btn-danger btn-sm" title="Excluir"><i class="bi bi-trash3-fill"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>6</td>
-                            <td>Carla Mendes</td>
-                            <td>carla.mendes@email.com</td>
-                            <td>(71) 98712-3344</td>
-                            <td>
-                                <button class="btn btn-primary btn-sm" title="Editar"><i class="bi bi-pencil-square"></i></button>
-                                <button class="btn btn-danger btn-sm" title="Excluir"><i class="bi bi-trash3-fill"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>7</td>
-                            <td>Bruno Pacheco</td>
-                            <td>bruno.pacheco@email.com</td>
-                            <td>(51) 91191-8282</td>
-                            <td>
-                                <button class="btn btn-primary btn-sm" title="Editar"><i class="bi bi-pencil-square"></i></button>
-                                <button class="btn btn-danger btn-sm" title="Excluir"><i class="bi bi-trash3-fill"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>8</td>
-                            <td>Luana Farias</td>
-                            <td>luana.farias@email.com</td>
-                            <td>(27) 99823-4477</td>
-                            <td>
-                                <button class="btn btn-primary btn-sm" title="Editar"><i class="bi bi-pencil-square"></i></button>
-                                <button class="btn btn-danger btn-sm" title="Excluir"><i class="bi bi-trash3-fill"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>9</td>
-                            <td>Tiago Martins</td>
-                            <td>tiago.martins@email.com</td>
-                            <td>(62) 99111-7777</td>
-                            <td>
-                                <button class="btn btn-primary btn-sm" title="Editar"><i class="bi bi-pencil-square"></i></button>
-                                <button class="btn btn-danger btn-sm" title="Excluir"><i class="bi bi-trash3-fill"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>10</td>
-                            <td>Sofia Rocha</td>
-                            <td>sofia.rocha@email.com</td>
-                            <td>(95) 99999-1234</td>
-                            <td>
-                                <button class="btn btn-primary btn-sm" title="Editar"><i class="bi bi-pencil-square"></i></button>
-                                <button class="btn btn-danger btn-sm" title="Excluir"><i class="bi bi-trash3-fill"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>11</td>
-                            <td>Daniel Souza</td>
-                            <td>daniel.souza@email.com</td>
-                            <td>(81) 91212-9090</td>
-                            <td>
-                                <button class="btn btn-primary btn-sm" title="Editar"><i class="bi bi-pencil-square"></i></button>
-                                <button class="btn btn-danger btn-sm" title="Excluir"><i class="bi bi-trash3-fill"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>12</td>
-                            <td>Gabriela Torres</td>
-                            <td>gabriela.torres@email.com</td>
-                            <td>(65) 99876-3322</td>
-                            <td>
-                                <button class="btn btn-primary btn-sm" title="Editar"><i class="bi bi-pencil-square"></i></button>
-                                <button class="btn btn-danger btn-sm" title="Excluir"><i class="bi bi-trash3-fill"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>13</td>
-                            <td>Felipe Ramos</td>
-                            <td>felipe.ramos@email.com</td>
-                            <td>(19) 94455-6677</td>
-                            <td>
-                                <button class="btn btn-primary btn-sm" title="Editar"><i class="bi bi-pencil-square"></i></button>
-                                <button class="btn btn-danger btn-sm" title="Excluir"><i class="bi bi-trash3-fill"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>14</td>
-                            <td>Isadora Nogueira</td>
-                            <td>isadora.nogueira@email.com</td>
-                            <td>(11) 95555-1212</td>
-                            <td>
-                                <button class="btn btn-primary btn-sm" title="Editar"><i class="bi bi-pencil-square"></i></button>
-                                <button class="btn btn-danger btn-sm" title="Excluir"><i class="bi bi-trash3-fill"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>15</td>
-                            <td>Marcelo Tavares</td>
-                            <td>marcelo.tavares@email.com</td>
-                            <td>(92) 98787-2121</td>
-                            <td>
-                                <button class="btn btn-primary btn-sm" title="Editar"><i class="bi bi-pencil-square"></i></button>
-                                <button class="btn btn-danger btn-sm" title="Excluir"><i class="bi bi-trash3-fill"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>16</td>
-                            <td>Vanessa Ribeiro</td>
-                            <td>vanessa.ribeiro@email.com</td>
-                            <td>(61) 99191-1122</td>
-                            <td>
-                                <button class="btn btn-primary btn-sm" title="Editar"><i class="bi bi-pencil-square"></i></button>
-                                <button class="btn btn-danger btn-sm" title="Excluir"><i class="bi bi-trash3-fill"></i></button>
-                            </td>
-                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>

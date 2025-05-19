@@ -1,3 +1,4 @@
+/* Tables */
 $(document).ready(function () {
     var table = $('#example').DataTable({
         responsive: true,
@@ -16,6 +17,7 @@ $(document).ready(function () {
     });
 });
 
+/* Active */
 document.querySelectorAll('.dropdown-menu .dropdown-item').forEach(link => {
     if (link.href === window.location.href) {
         link.setAttribute('aria-current', 'page');
