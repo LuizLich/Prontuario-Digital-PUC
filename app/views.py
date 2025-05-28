@@ -31,8 +31,11 @@ def meuperfil():
 def sobre():
     return render_template('sobre.html')
 
+@main.route('/novopaciente')
+def novopaciente():
+    return render_template('novopaciente.html')
 
-# Apenas para ADIMIN
+# Área do ADIMIN
 @main.route('/usuarios')
 def usuarios():
     usuarios = User.query.all()
@@ -42,10 +45,6 @@ def usuarios():
 def addusuario():
     return render_template('addusuario.html')
 
-@main.route('/delete_user/<int:users_id>', methods=['POST'])
-def delete_user(users_id):  # Agora usando 'users_id'
-    user = User.query.get_or_404(users_id)  # Busca o usuário pelo ID correto
-    db.session.delete(user)  # Exclui o usuário do banco
-    db.session.commit()  # Salva as alterações
-
-    return redirect(url_for('main.usuarios'))  # Redireciona para a lista de usuários
+@main.route('/criarprontuario')
+def criarprontuario():
+    return render_template('criarprontuario.html')

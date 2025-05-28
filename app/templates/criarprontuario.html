@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Criar prontuário{% endblock %}
+
+{% block content %}
+<section id="welcome" class="py-5">
+    <div class="container px-6">
+        <div class="row">
+            <div class="container-fluid py-4">
+                <h1 class="text-center mb-4 fw-bold">Crie prontuários</h1>
+                <div class="mb-3">
+                    <label for="formName" class="form-label">Nome do prontuário 
+                        <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" class="form-control" id="formName" placeholder="Digite o nome do prontuário" required>
+                </div>
+                <div class="build-wrap"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="previewModalLabel">Preview do Formulário</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="previewContent">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Carregando...</span>
+                    </div>
+                    <p class="mt-2">Carregando preview...</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi"></i>Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
