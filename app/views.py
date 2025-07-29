@@ -16,7 +16,6 @@ def pacientes():
 
 @main.route('/lista_prontuarios')
 def lista_prontuarios():
-    ##pacientes = Paciente.query.all()
     forms_active = Form.query.all()
     return render_template('lista_prontuarios.html', forms_active=forms_active)
 
@@ -102,5 +101,4 @@ def get_form_structure(form_id):
             "title": form_template.title,
             "structure_json": form_template.structure_json 
         })
-    # get_or_404 caso de não encontrar:
     return jsonify({"status": "error", "message": "A estrutura desse formulário não foi encontrada"}), 404

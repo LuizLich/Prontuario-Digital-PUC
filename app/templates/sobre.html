@@ -1,13 +1,44 @@
 {% extends 'base.html' %}
 
 {% block title %}Sobre{% endblock %}
+
 {% block content %}
-<section id="welcome" class="py-5">
-    <h1 class="py-2 text-center fw-bold">Sobre</h1>
-        <div class="welcome-description mt-4 text-center">
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam expedita labore voluptatem ratione nulla modi error harum accusantium magni, rerum dolor consequatur, eius vero recusandae adipisci aut nemo quod? Sint!</p>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam expedita labore voluptatem ratione nulla modi error harum accusantium magni, rerum dolor consequatur, eius vero recusandae adipisci aut nemo quod? Sint!</p>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam expedita labore voluptatem ratione nulla modi error harum accusantium magni, rerum dolor consequatur, eius vero recusandae adipisci aut nemo quod? Sint!</p>
-        </div>     
+<section id="welcome" class="py-5 bg-light" style="font-family: 'Poppins', sans-serif;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <h1 class="text-center fw-bold mb-4">Sobre o Projeto</h1>
+
+                <p class="text-center lead">
+                    O <strong>Prontuário Digital PUC Minas</strong>, em desenvolvimento por <strong>Luiz Felipe Terra da Silva</strong>, orientado pelo professor <strong>Harison Herman Silva</strong> e com a colaboração da aluna <strong>Gleyce Clososki</strong>, tem como objetivo otimizar e digitalizar os processos de atendimento na área de Fisioterapia da PUC Minas Poços de Caldas.
+                </p>
+
+                <hr class="my-4">
+
+                <h5 class="fw-bold mt-4">Funcionalidades Principais:</h5>
+                <ul class="list-group list-group-flush mb-4">
+                    <li class="list-group-item">•<strong> Criação de Prontuários:</strong> registro e organização de novos prontuários.</li>
+                    <li class="list-group-item">•<strong> Consulta de Prontuários:</strong> acesso rápido ao histórico dos pacientes.</li>
+                    <li class="list-group-item">•<strong> Gerenciamento de Prontuários:</strong> atualização e manutenção dos dados com facilidade.</li>
+                </ul>
+
+                <p class="text-center">
+                    Desenvolvido nas disciplinas de <strong>Estágio Obrigatório</strong> e <strong>Trabalho de Diplomação</strong>, o sistema visa apoiar o registro, a consulta e o acompanhamento das informações clínicas de pacientes atendidos por estagiários e professores.
+                </p>
+
+                <p class="text-center">
+                    O sistema busca modernizar a gestão de dados clínicos, tornando-a mais eficiente, segura e acessível.
+                </p>
+
+                <div class="text-center mt-4">
+                    <span class="badge bg-primary fs-6">Tecnologias Utilizadas</span>
+                </div>
+
+                <p class="text-center mt-2">
+                    <strong>Python Flask</strong>, <strong>HTML</strong>, <strong>CSS</strong>, <strong>JavaScript</strong>, <strong>Bootstrap 5</strong> e <strong>MySQL</strong>
+                </p>
+            </div>
+        </div>
+    </div>
 </section>
 {% endblock %}

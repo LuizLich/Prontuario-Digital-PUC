@@ -3,7 +3,7 @@ $(document).ready(function () {
     var table = $('#example').DataTable({
         responsive: true,
         language: {
-            url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json'
+            url: '/static/i18n/pt-BR.json'
         }
     });
 });
@@ -12,7 +12,7 @@ $(document).ready(function () {
     var table = $('#example2').DataTable({
         responsive: true,
         language: {
-            url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json'
+            url: '/static/i18n/pt-BR.json'
         }
     });
 });
@@ -140,8 +140,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-// Lógica jQuery (FormBuilder e Nova Lógica para novopaciente.html)
-// Novo paciente (Vanilla JS - Bloco existente, com pequenas melhorias de verificação)
+
 document.addEventListener('DOMContentLoaded', function () {
     // Habilitar/desabilitar e tornar obrigatório o campo de texto "Outra" para Raça/Etnia
     const racaRadios = document.querySelectorAll('input[name="raca_etnia"]');
