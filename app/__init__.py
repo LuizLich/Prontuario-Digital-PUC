@@ -2,8 +2,12 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from dotenv import load_dotenv
 
 def create_app():
+    # Carrega as variáveis de ambiente do arquivo .env
+    load_dotenv()
+
     app = Flask(__name__)
 
     DATABASE_URL = os.environ.get('DATABASE_URL')
@@ -12,7 +16,7 @@ def create_app():
         DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
     else:
         # Manter conexão local
-        DATABASE_URL = 'mysql+pymysql://root@localhost/db_fisio'
+        DATABASE_URL = os.environ.get('DATABASE_URL_LOCAL')
 
     app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
