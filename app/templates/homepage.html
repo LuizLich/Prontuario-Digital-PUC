@@ -3,40 +3,53 @@
 {% block title %}Página Inicial{% endblock %}
 {% block content %}
 <section id="welcome" class="py-5">
-    <h1 class="py-2 text-center fw-bold">Bem-vindo(a)!</h1>
-    <div class="container d-flex justify-content-center py-2">
-        <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
-            <div class="col d-flex justify-content-center">
-              <div class="card border-secondary border rounded-3" style="width: 18rem;">
-                <img src="{{ url_for('static', filename='img/adddoc.jpg') }}" class="card-img-top card-img-fix" alt="...">
-                <div class="card-body">
-                  <h5 class="card-title">Adicionar novo paciente</h5><hr>
-                  <p class="card-text">Adicione um novo paciente, preencha informações sobre e atribua um prontuário</p>
-                  <a href="/novopaciente" class="btn btn-primary d-flex justify-content-center">Adicione novo paciente</a>
-                </div>
-              </div>
-            </div>
-            <div class="col d-flex justify-content-center">
-              <div class="card border-secondary border rounded-3" style="width: 18rem;">
-                <img src="{{ url_for('static', filename='img/search.jpg') }}" class="card-img-top card-img-fix" alt="...">
-                <div class="card-body">
-                  <h5 class="card-title">Modelos disponíveis</h5><hr>
-                  <p class="card-text">Consulte a lista de modelos de prontuários existentes e confira informações</p>
-                  <a href="/lista_prontuarios" class="btn btn-primary d-flex justify-content-center">Pesquise</a>
-                </div>
-              </div>
-            </div>
-            <div class="col d-flex justify-content-center">
-              <div class="card border-secondary border rounded-3" style="width: 18rem;">
-                <img src="{{ url_for('static', filename='img/myprof.jpg') }}" class="card-img-top card-img-fix" alt="...">
-                <div class="card-body">
-                  <h5 class="card-title">Meu perfil</h5><hr>
-                  <p class="card-text">Confime as informações sobre seu perfil, como email, nome e número de telefone</p>
-                  <a href="/meuperfil" class="btn btn-primary d-flex justify-content-center">Acesse seu perfil</a>
-                </div>
-              </div>
-            </div>
+  <h1 class="py-2 text-center fw-bold">Bem-vindo(a)!</h1>
+  <div class="container py-4">
+    <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
+
+      <!-- Card 1 -->
+      <div class="col">
+        <div class="card shadow-lg border-0 rounded-4 h-100 text-center p-5 card-hover">
+          <div class="icon-circle mx-auto mb-4">
+            <i class="bi bi-person-plus-fill text-primary fs-1"></i>
+          </div>
+          <h4 class="fw-bold mb-3">Adicionar novo paciente</h4>
+          <p class="text-muted mb-4">
+            Adicione um novo paciente, preencha informações sobre ele e atribua um prontuário.
+          </p>
+          <a href="/novopaciente" class="btn btn-primary rounded-pill px-5 py-2">Adicionar</a>
         </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="col">
+        <div class="card shadow-lg border-0 rounded-4 h-100 text-center p-5 card-hover">
+          <div class="icon-circle mx-auto mb-4">
+            <i class="bi bi-file-earmark-text-fill text-success fs-1"></i>
+          </div>
+          <h4 class="fw-bold mb-3">Modelos disponíveis</h4>
+          <p class="text-muted mb-4">
+            Consulte a lista de modelos de prontuários existentes e confira informações.
+          </p>
+          <a href="/lista_prontuarios" class="btn btn-success rounded-pill px-5 py-2">Pesquisar</a>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="col">
+        <div class="card shadow-lg border-0 rounded-4 h-100 text-center p-5 card-hover">
+          <div class="icon-circle mx-auto mb-4">
+            <i class="bi bi-person-circle text-info fs-1"></i>
+          </div>
+          <h4 class="fw-bold mb-3">Meu perfil</h4>
+          <p class="text-muted mb-4">
+            Confirme as informações sobre seu perfil, como e-mail, nome e número de telefone.
+          </p>
+          <a href="/meuperfil" class="btn btn-info rounded-pill px-5 py-2 text-white">Acessar</a>
+        </div>
+      </div>
+
     </div>
+  </div>
 </section>
 {% endblock %}

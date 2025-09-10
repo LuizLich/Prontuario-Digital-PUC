@@ -1,44 +1,51 @@
 {% extends 'base.html' %}
-{% block title %}Criar prontuário{% endblock %}
+
+{% block title %}
+{% if form_id %}Editar Prontuário{% else %}Criar Prontuário{% endif %}
+{% endblock %}
 
 {% block content %}
-<section id="welcome" class="py-5">
-    <div class="container px-6">
+<section id="create-form" class="py-5">
+    <div class="container px-4">
         <div class="row">
-            <div class="container-fluid py-4">
-                <h1 class="text-center mb-4 fw-bold">Crie prontuários</h1>
+            <div class="col-md-12">
+                <h1 class="py-2 text-center fw-bold">
+                    {% if form_id %}
+                    Editar Prontuário
+                    {% else %}
+                    Criar Novo Prontuário
+                    {% endif %}
+                </h1>
+            </div>
+
+            <input type="hidden" id="formId" value="{{ form_id or '' }}">
+            <input type="hidden" id="formTitle" value="{{ title or '' }}">
+            <input type="hidden" id="formJson" value='{{ structure_json|safe if structure_json else "" }}'>
+
+            <div class="col-md-12">
                 <div class="mb-3">
-                    <label for="formName" class="form-label">Nome do prontuário 
-                        <span class="text-danger">*</span>
-                    </label>
-                    <input type="text" class="form-control" id="formName" placeholder="Digite o nome do prontuário" required>
+                    <label for="formName" class="form-label fw-bold">Nome do prontuário</label>
+                    <input type="text" id="formName" class="form-control" value="{{ title or '' }}" required>
                 </div>
-                <div class="build-wrap"></div>
+                <div class="build-wrap border rounded p-3"></div>
             </div>
         </div>
     </div>
 </section>
 
+<!-- Modal de Preview -->
 <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="previewModalLabel">Preview do Formulário</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                    aria-label="Close"></button>
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="previewModalLabel">Pré-visualização do prontuário</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
-            <div class="modal-body" id="previewContent">
-                <div class="text-center py-4">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Carregando...</span>
-                    </div>
-                    <p class="mt-2">Carregando preview...</p>
-                </div>
+            <div class="modal-body">
+                <div id="previewContent"></div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="bi"></i>Fechar
-                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
             </div>
         </div>
     </div>

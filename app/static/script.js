@@ -18,25 +18,27 @@ $(document).ready(function () {
 });
 
 /* Active */
+document.querySelectorAll('.nav-link:not(.dropdown-toggle)').forEach(link => {
+    if (link.href === window.location.href) {
+        link.classList.add('active');
+        link.setAttribute('aria-current', 'page');
+    }
+});
+
 document.querySelectorAll('.dropdown-menu .dropdown-item').forEach(link => {
     if (link.href === window.location.href) {
-        link.setAttribute('aria-current', 'page');
-
+        link.classList.add('active');
         const dropdown = link.closest('.dropdown');
         if (dropdown) {
             const parentLink = dropdown.querySelector('.nav-link.dropdown-toggle');
             if (parentLink) {
+                parentLink.classList.add('active');
                 parentLink.setAttribute('aria-current', 'page');
             }
         }
     }
 });
 
-document.querySelectorAll('.nav-link:not(.dropdown-toggle)').forEach(link => {
-    if (link.href === window.location.href) {
-        link.setAttribute('aria-current', 'page');
-    }
-});
 
 // Novo paciente
 document.addEventListener('DOMContentLoaded', function () {
@@ -237,373 +239,326 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-// Lógica jQuery
+// Lógica jQuery FormBuilder
 jQuery($ => {
     if ($('.build-wrap').length) {
         const options = {
             i18n: {
                 override: {
                     'en-US': {
-                        addOption: 'Adicionar Opção +', 
-                        allFieldsRemoved: 'Todos os campos foram removidos.', 
+                        addOption: 'Adicionar Opção +',
+                        allFieldsRemoved: 'Todos os campos foram removidos.',
                         allowMultipleFiles: 'Permitir múltiplos arquivos',
-                        autocomplete: 'Autocompletar', 
-                        button: 'Botão', 
+                        autocomplete: 'Autocompletar',
+                        button: 'Botão',
                         cannotBeEmpty: 'Este campo não pode estar vazio',
-                        checkboxGroup: 'Checkboxes', 
-                        className: 'Classe', 
+                        checkboxGroup: 'Checkboxes',
+                        className: 'Classe',
                         clearAllMessage: 'Tem certeza que deseja limpar todos os campos?',
-                        clear: 'Limpar todos os itens', 
-                        close: 'Fechar', 
-                        content: 'Conteúdo', 
+                        clear: 'Limpar todos os itens',
+                        close: 'Fechar',
+                        content: 'Conteúdo',
                         copy: 'Copiar',
-                        copyButton: '&#43;', 
-                        copyButtonTooltip: 'Copiar', 
+                        copyButton: '&#43;',
+                        copyButtonTooltip: 'Copiar',
                         dateField: 'Selecionar data',
-                        description: 'Texto de Ajuda', 
-                        descriptionField: 'Descrição', 
+                        description: 'Texto de Ajuda',
+                        descriptionField: 'Descrição',
                         devMode: 'Modo Desenvolvedor',
-                        editNames: 'Editar Nomes', 
-                        editorTitle: 'Elementos do Formulário', 
+                        editNames: 'Editar Nomes',
+                        editorTitle: 'Elementos do Formulário',
                         editXML: 'Editar XML',
-                        enableOther: 'Habilitar "Outro"', 
+                        enableOther: 'Habilitar "Outro"',
                         enableOtherMsg: 'Permitir opções não listadas',
-                        fieldNonEditable: 'Este campo não pode ser editado.', 
+                        fieldNonEditable: 'Este campo não pode ser editado.',
                         fieldRemoveWarning: 'Tem certeza que deseja remover este campo?',
-                        fileUpload: 'Upload de Arquivo', 
+                        fileUpload: 'Upload de Arquivo',
                         formUpdated: 'Formulário Atualizado',
-                        getStarted: 'Arraste um campo da direita para esta área', 
-                        header: 'Cabeçalho', 
+                        getStarted: 'Arraste um campo da direita para esta área',
+                        header: 'Cabeçalho',
                         hide: 'Editar',
-                        hidden: 'Campo Oculto', 
-                        inline: 'Em linha', 
-                        inlineDesc: 'Mostrar {type} em linha', 
+                        hidden: 'Campo Oculto',
+                        inline: 'Em linha',
+                        inlineDesc: 'Mostrar {type} em linha',
                         label: 'Rótulo',
-                        labelEmpty: 'O rótulo do campo não pode estar vazio', 
-                        limitRole: 'Limitar acesso a um ou mais dos seguintes papéis:',
-                        mandatory: 'Obrigatório', 
-                        maxlength: 'Tamanho Máximo', 
+                        labelEmpty: 'O rótulo do campo não pode estar vazio',
+                        limitRole: 'Limitar acesso a papéis',
+                        mandatory: 'Obrigatório',
+                        maxlength: 'Tamanho Máximo',
                         minOptionMessage: 'Este campo requer no mínimo 2 opções',
-                        multipleFiles: 'Múltiplos Arquivos', 
-                        name: 'Nome', 
-                        no: 'Não', 
+                        multipleFiles: 'Múltiplos Arquivos',
+                        name: 'Nome',
+                        no: 'Não',
                         noFieldsToClear: 'Não há campos para limpar',
-                        number: 'Número', 
-                        off: 'Desligado', 
-                        on: 'Ligado', 
-                        option: 'Opção', 
+                        number: 'Número',
+                        off: 'Desligado',
+                        on: 'Ligado',
+                        option: 'Opção',
                         options: 'Opções',
-                        optional: 'opcional', 
-                        optionLabelPlaceholder: 'Rótulo', 
+                        optional: 'opcional',
+                        optionLabelPlaceholder: 'Rótulo',
                         optionValuePlaceholder: 'Valor',
-                        optionEmpty: 'Valor da opção é obrigatório', 
-                        other: 'Outro', 
+                        optionEmpty: 'Valor da opção é obrigatório',
+                        other: 'Outro',
                         paragraph: 'Parágrafo',
-                        placeholder: 'Placeholder', 
-                        'placeholder.value': 'Valor', 
-                        'placeholder.label': 'Rótulo',
-                        'placeholder.text': '', 
-                        'placeholder.textarea': '', 
+                        placeholder: 'Placeholder',
                         'placeholder.email': 'Digite seu email',
-                        'placeholder.placeholder': '', 
-                        'placeholder.className': 'classes separadas por espaço',
-                        'placeholder.password': 'Digite sua senha', 
-                        preview: 'Pré-visualizar', 
+                        'placeholder.password': 'Digite sua senha',
+                        preview: 'Pré-visualizar',
                         radioGroup: 'Radios',
-                        radio: 'Radio', 
-                        removeMessage: 'Remover Elemento', 
-                        removeOption: 'Remover Opção', 
+                        radio: 'Radio',
+                        removeMessage: 'Remover Elemento',
+                        removeOption: 'Remover Opção',
                         remove: '&#215;',
-                        required: 'Obrigatório', 
-                        richText: 'Editor de Texto Rico', 
-                        roles: 'Acesso', 
+                        required: 'Obrigatório',
+                        richText: 'Editor de Texto Rico',
+                        roles: 'Acesso',
                         rows: 'Linhas',
-                        save: 'Salvar', 
-                        selectOptions: 'Opções', 
-                        select: 'Dropdown', 
+                        save: 'Salvar',
+                        selectOptions: 'Opções',
+                        select: 'Dropdown',
                         selectColor: 'Selecionar Cor',
-                        selectionsMessage: 'Permitir múltiplas seleções', 
-                        size: 'Tamanho', 'size.xs': 'Extra Pequeno',
-                        'size.sm': 'Pequeno', 'size.m': 'Padrão', 'size.lg': 'Grande', 
+                        selectionsMessage: 'Permitir múltiplas seleções',
+                        size: 'Tamanho',
+                        'size.xs': 'Extra Pequeno',
+                        'size.sm': 'Pequeno',
+                        'size.m': 'Padrão',
+                        'size.lg': 'Grande',
                         style: 'Estilo',
-                        styles: 
-                        { btn: { 'default': 'Padrão', danger: 'Perigo', info: 'Informação', primary: 'Primário', success: 'Sucesso', warning: 'Aviso' } },
-                        subtype: 'Tipo', 
-                        text: 'Campo de Texto', 
-                        textArea: 'Área de Texto', 
+                        subtype: 'Tipo',
+                        text: 'Campo de Texto',
+                        textArea: 'Área de Texto',
                         toggle: 'Alternar',
-                        warning: 'Aviso!', 
-                        value: 'Valor', 
-                        viewJSON: '{  }', 
-                        viewXML: '&lt;/&gt;', 
-                        time: 'Hora', 
+                        warning: 'Aviso!',
+                        value: 'Valor',
+                        viewJSON: '{  }',
+                        viewXML: '&lt;/&gt;',
+                        time: 'Hora',
                         yes: 'Sim'
                     }
                 }
             },
-            disableFields: [
-                'autocomplete', 'button', 'hidden', 'paragraph', 'text', 'number', 'textarea', 'header',
-                'file', 'date', 'checkbox-group', 'radio-group', 'select'
-            ],
-            controlOrder: [
-                'header', 'text', 'textarea', 'paragraph', 'number', 'checkbox-group',
-                'date', 'file', 'radio-group', 'Dropdown', 'select',
-            ],
-            fields: [
-                { label: 'Cabeçalho', type: 'header' }, 
-                { label: 'Checkboxes', type: 'checkbox-group' },
-                { label: 'Selecionar data', type: 'date' }, 
-                { label: 'Upload de Arquivo', type: 'file' },
-                { label: 'Número', type: 'number' }, 
-                { label: 'Parágrafo', type: 'paragraph' },
-                { label: 'Radios', type: 'radio-group' }, 
-                { label: 'Dropdown', type: 'select' },
-                { label: 'Campo de texto', type: 'text' }, 
-                { label: 'Área de texto', type: 'textarea' }
-            ],
-            disabledAttrs: [
-                'className', 'name', 'access', 'max', 'maxlength', 'min', 'value', 'step'
-            ],
+            disableFields: ['autocomplete', 'button', 'hidden'],
+            disabledAttrs: ['className', 'name', 'access', 'max', 'maxlength', 'min', 'value', 'step'],
             disabledActionButtons: ['data', 'save'],
             scrollToFieldOnAdd: false,
-            disabledSubtypes: {
-                text: ['password', 'color'],
-                number: ['range']
-            },
             onSave: function (evt, formData) {
                 const formName = $('#formName').val().trim();
                 if (!formName) {
                     alert('Por favor, preencha o nome do prontuário antes de salvar.');
                     $('#formName').focus();
-                    if (evt && typeof evt.preventDefault === 'function') {
-                        evt.preventDefault();
-                    }
+                    evt.preventDefault();
                     return false;
                 }
-                console.log('Nome do Prontuário (onSave):', formName);
-                console.log('Dados do Formulário (JSON onSave):', formData);
+
+                const formId = $('#formId').val();
+                const url = formId ? `/atualizar_formulario/${formId}` : '/salvar_formulario';
+
                 $.ajax({
-                    url: '/salvar_formulario',
+                    url: url,
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify({ name: formName, structure: formData }),
-                    success: function(response) {
-                        console.log('Resposta do servidor:', response);
+                    success: function (response) {
                         alert(response.message || 'Formulário salvo com sucesso!');
-                    },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        console.error('Erro ao salvar formulário:', textStatus, errorThrown, jqXHR.responseText);
-                        let errorMessage = 'Erro ao salvar o formulário.';
-                        if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
-                            errorMessage = jqXHR.responseJSON.message;
-                        } else if (jqXHR.responseText) {
-                            try {
-                                const errData = JSON.parse(jqXHR.responseText);
-                                if(errData && errData.message) errorMessage = errData.message;
-                            } catch(e) { /* não faz nada se não for JSON */ }
+                        if (!formId) {
+                            window.location.href = '/lista_prontuarios';
                         }
-                        alert(errorMessage);
+                    },
+                    error: function (jqXHR) {
+                        console.error("Erro ao salvar formulário:", jqXHR.responseText);
+                        alert("Erro ao salvar o formulário.");
                     }
                 });
             },
-            actionButtons: [{
-                id: 'formBuilderPreviewBtn', 
-                className: 'btn btn-secondary', 
-                label: '<i class="bi bi-eye-fill"> Preview do formulário</i>',
-                type: 'button',
-                events: {
-                    click: function () {
-                        const $previewContent = $('#previewContent'); // Modal de preview
-                        const formData = fbInstance.actions.getData('json');
-                        const formTitle = $('#formName').val().trim(); 
-                        $previewContent.empty();
-                        if (formTitle) {
-                            $previewContent.append($('<h3>').addClass('text-center mb-3').text(formTitle));
-                        } else {
-                            $previewContent.append($('<h3>').addClass('text-center mb-3 text-muted').text('[Prontuário sem nome definido]'));
-                        }
-                        const $formRenderArea = $('<div>').attr('id', 'form-render-area-modal'); // ID único para o container do modal
-                        $previewContent.append($formRenderArea);
-                        if (formData && formData !== '[]') {
-                            $formRenderArea.formRender({ formData: formData }); 
-                        } else {
-                            $formRenderArea.html('<p class="text-center text-muted mt-2">Nenhum campo adicionado ao formulário para pré-visualizar.</p>');
-                        }
-                        var previewModal = new bootstrap.Modal(document.getElementById('previewModal'));
-                        previewModal.show();
-                    }
-                }
-            },
-            {
-                id: 'saveDataBtn', 
-                className: 'btn btn-primary save-template',
-                label: '<i class="bi bi-save-fill me-2"> Salvar</i>',
-                type: 'button',
-                events: {
-                    click: function (evt) { 
-                        if (options.onSave && typeof options.onSave === 'function') {
-                            options.onSave(evt, fbInstance.actions.getData('json')); 
-                        } else {
-                            console.warn('Função options.onSave não encontrada para o botão Salvar.');
+            actionButtons: [
+                {
+                    id: 'formBuilderPreviewBtn',
+                    className: 'btn btn-secondary',
+                    label: '<i class="bi bi-eye-fill"></i> Preview',
+                    type: 'button',
+                    events: {
+                        click: function () {
+                            const $previewContent = $('#previewContent');
+                            const formData = fbInstance.actions.getData('json');
+                            const formTitle = $('#formName').val().trim();
+                            $previewContent.empty();
+
+                            $previewContent.append(
+                                $('<h3>').addClass('text-center mb-3').text(formTitle || '[Prontuário sem nome]')
+                            );
+
+                            const $formRenderArea = $('<div id="form-render-area-modal">');
+                            $previewContent.append($formRenderArea);
+
+                            if (formData && formData !== '[]') {
+                                $formRenderArea.formRender({ formData });
+                            } else {
+                                $formRenderArea.html('<p class="text-center text-muted">Nenhum campo adicionado.</p>');
+                            }
+
+                            new bootstrap.Modal(document.getElementById('previewModal')).show();
                         }
                     }
+                },
+                {
+                    id: 'saveDataBtn',
+                    className: 'btn btn-primary',
+                    label: '<i class="bi bi-save-fill"></i> Salvar',
+                    type: 'button',
+                    events: {
+                        click: function (evt) {
+                            options.onSave(evt, fbInstance.actions.getData('json'));
+                        }
+                    }
                 }
-            }]
+            ]
         };
+
         const fbInstance = $('.build-wrap').formBuilder(options);
+        // Se estiver editando um formulário existente, carrega dados
+        const formId = $('#formId').val();
+        if (formId) {
+            $.ajax({
+                url: `/get_form_structure/${formId}`,
+                method: 'GET',
+                success: function (response) {
+                    if (response.status === "success") {
+                        fbInstance.actions.setData(response.structure_json);
+                        $('#formName').val(response.title);
+                    }
+                }
+            });
+        }
     }
 
-    const $formNovoPaciente = $('#formNovoPaciente'); // Form principal da página novopaciente.html
-    const $prontuarioDropdown = $('#prontuarioSelecionado'); // Dropdown de seleção de prontuário
+    // Renderização do Prontuário no Novo Paciente
+    const $formNovoPaciente = $('#formNovoPaciente');
+    const $prontuarioDropdown = $('#prontuarioSelecionado');
 
     if ($formNovoPaciente.length && $prontuarioDropdown.length) {
-
         const $renderedFormContainer = $('#renderedFormContainer');
         const $renderedFormTitleContainer = $('#renderedFormTitleContainer');
         const $renderedFormTitleText = $('#renderedFormTitleText');
 
-        $prontuarioDropdown.on('change', function() {
+        $prontuarioDropdown.on('change', function () {
             const formId = $(this).val();
-            const selectedOptionText = $(this).find('option:selected').text();
+            const selectedText = $(this).find('option:selected').text();
 
             $renderedFormContainer.empty().hide();
             $renderedFormTitleText.empty();
             $renderedFormTitleContainer.hide();
 
-            if (formId && formId !== "") {
-                const $loadingPlaceholder = $(
-                    '<div class="text-center py-3">' +
-                        '<div class="spinner-border text-primary" role="status">' +
-                            '<span class="visually-hidden">Carregando formulário...</span>' +
-                        '</div>' +
-                        '<p class="mt-2">Carregando formulário...</p>' +
-                    '</div>'
-                );
-                $renderedFormContainer.append($loadingPlaceholder).show();
+            if (formId) {
+                const loading = `
+                    <div class="text-center py-3">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <p class="mt-2">Carregando formulário...</p>
+                    </div>`;
+                $renderedFormContainer.html(loading).show();
 
                 $.ajax({
                     url: `/get_form_structure/${formId}`,
                     type: 'GET',
                     dataType: 'json',
-                    success: function(response) {
-                        $loadingPlaceholder.remove();
+                    success: function (response) {
+                        $renderedFormContainer.empty();
                         if (response.status === 'success' && response.structure_json) {
-                            try {
-                                // formRender espera o JSON
-                                // A resposta do servidor já tem structure_json como string JSON
-                                const formDataToRender = response.structure_json; 
-                                
-                                $renderedFormTitleText.text(response.title || selectedOptionText);
-                                $renderedFormTitleContainer.show();
-                                
-                                $renderedFormContainer.formRender({ formData: formDataToRender });
-                                $renderedFormContainer.show();
-                            } catch (e) {
-                                console.error("Erro ao processar JSON da estrutura do formulário:", e, response.structure_json);
-                                $renderedFormContainer.html('<p class="text-danger">Erro ao processar a estrutura do formulário.</p>');
-                            }
+                            $renderedFormTitleText.text(response.title || selectedText);
+                            $renderedFormTitleContainer.show();
+                            $renderedFormContainer.formRender({ formData: response.structure_json }).show();
                         } else {
-                            console.error("Erro ao buscar estrutura do formulário:", response.message);
-                            $renderedFormContainer.html(`<p class="text-danger">${response.message || 'Não foi possível carregar a estrutura do formulário.'}</p>`);
+                            $renderedFormContainer.html('<p class="text-danger">Erro ao carregar formulário.</p>');
                         }
                     },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        $loadingPlaceholder.remove();
-                        console.error('Erro AJAX ao buscar formulário:', textStatus, errorThrown, jqXHR.responseText);
-                        $renderedFormContainer.html('<p class="text-danger">Erro de comunicação ao buscar o formulário. Tente novamente.</p>');
+                    error: function () {
+                        $renderedFormContainer.html('<p class="text-danger">Falha na comunicação com o servidor.</p>');
                     }
                 });
             }
         });
 
-        $formNovoPaciente.on('submit', function(event) {
-            event.preventDefault(); 
+        $formNovoPaciente.on('submit', function (event) {
+            event.preventDefault();
 
             const identificacaoData = {};
-            $(this).find('input:not([name^="renderedForm"]), select:not(#prontuarioSelecionado), textarea').each(function() {
+            $(this).find('input, select, textarea').each(function () {
                 const name = $(this).attr('name');
-                if (name) {
-                    if ($(this).is(':radio')) {
-                        if ($(this).is(':checked')) {
-                            identificacaoData[name] = $(this).val();
-                        }
-                    } else if ($(this).is(':checkbox')) {
+                if (name && !name.startsWith("renderedForm")) {
+                    if ($(this).is(':radio') && !$(this).is(':checked')) return;
+                    if ($(this).is(':checkbox')) {
                         identificacaoData[name] = $(this).is(':checked');
                     } else {
                         identificacaoData[name] = $(this).val();
                     }
                 }
             });
-            identificacaoData['prontuario_template_id'] = $prontuarioDropdown.val(); 
+            identificacaoData['prontuario_template_id'] = $prontuarioDropdown.val();
 
-            console.log("Dados de Identificação Coletados:", identificacaoData);
-
-            const prontuarioRenderizadoData = {};
-            $('#renderedFormContainer').find('input, select, textarea').each(function() {
+            const prontuarioRespostas = {};
+            $('#renderedFormContainer').find('input, select, textarea').each(function () {
                 const name = $(this).attr('name');
-                if (name) { 
-                    if ($(this).is(':radio')) {
-                        if ($(this).is(':checked')) {
-                            prontuarioRenderizadoData[name] = $(this).val();
-                        }
-                    } else if ($(this).is(':checkbox')) {
-                        // Coleta de múltiplos checkboxes
-                        if (!prontuarioRenderizadoData[name]) {
-                            prontuarioRenderizadoData[name] = [];
-                        }
-                        if ($(this).is(':checked')) {
-                            prontuarioRenderizadoData[name].push($(this).val());
-                        }
+                if (name) {
+                    if ($(this).is(':radio') && !$(this).is(':checked')) return;
+                    if ($(this).is(':checkbox')) {
+                        if (!prontuarioRespostas[name]) prontuarioRespostas[name] = [];
+                        if ($(this).is(':checked')) prontuarioRespostas[name].push($(this).val());
                     } else {
-                        prontuarioRenderizadoData[name] = $(this).val();
+                        prontuarioRespostas[name] = $(this).val();
                     }
                 }
             });
-            // Se nenhum checkbox de um grupo for marcado, a array pode ficar vazia.
-            // Remover chaves com arrays vazias se necessário para o backend
-            for (const key in prontuarioRenderizadoData) {
-                if (Array.isArray(prontuarioRenderizadoData[key]) && prontuarioRenderizadoData[key].length === 0) {
-                    // delete prontuarioRenderizadoData[key];
-                }
-            }
-            console.log("Dados do Prontuário Renderizado Coletados:", prontuarioRenderizadoData);
 
-            const dadosCompletosParaSalvar = {
+            const payload = {
                 identificacao: identificacaoData,
-                prontuario_respostas: prontuarioRenderizadoData,
-                form_template_id: $prontuarioDropdown.val() // ID do template de formulário usado
+                prontuario_respostas: prontuarioRespostas,
+                form_template_id: $prontuarioDropdown.val()
             };
 
-            // TODO: Implementar a chamada AJAX para a nova rota Flask que salvará esses dados
-            // Exemplo da chamada AJAX:
+            console.log("Dados completos:", payload);
+
+            // Aqui você pode ativar a chamada AJAX real:
             /*
             $.ajax({
-                url: '/salvar_paciente_com_prontuario', // Defina esta rota no seu views.py
+                url: '/salvar_paciente_com_prontuario',
                 type: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify(dadosCompletosParaSalvar),
-                success: function(response) {
-                    alert(response.message || 'Paciente e prontuário salvos com sucesso!');
-                    $formNovoPaciente[0].reset(); 
-                    $renderedFormContainer.empty().hide(); 
-                    $renderedFormTitleText.empty();
-                    $renderedFormTitleContainer.hide();
-                    $prontuarioDropdown.val(''); 
-                    // window.location.href = '/pagina_de_sucesso_ou_lista_pacientes';
+                data: JSON.stringify(payload),
+                success: function (response) {
+                    alert(response.message || 'Salvo com sucesso!');
+                    window.location.href = '/lista_pacientes';
                 },
-                error: function(jqXHR) {
-                    let errorMsg = 'Erro ao salvar os dados do paciente e prontuário.';
-                    if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
-                        errorMsg = jqXHR.responseJSON.message;
-                    } else {
-                        errorMsg = jqXHR.responseText || errorMsg; // fallback para responseText
-                    }
-                    alert(errorMsg);
-                    console.error("Erro ao salvar paciente com prontuário:", jqXHR.responseText);
+                error: function (jqXHR) {
+                    alert("Erro ao salvar: " + (jqXHR.responseJSON?.message || jqXHR.responseText));
                 }
             });
             */
-            alert("Submissão AJAX interceptada (para demonstração)! Verifique o console para os 'dadosCompletosParaSalvar'. A lógica de envio para o backend precisa ser implementada na chamada AJAX comentada.");
         });
     }
 });
+
+function previewForm(formId, title) {
+    const $previewContent = $('#previewContent');
+    $previewContent.empty();
+
+    $.get(`/get_form_structure/${formId}`, function (data) {
+        if (data.status === "success") {
+            $previewContent.append(
+                $('<h3>').addClass('text-center mb-3').text(title || '[Prontuário sem nome]')
+            );
+
+            const $formRenderArea = $('<div id="form-render-area-modal">');
+            $previewContent.append($formRenderArea);
+
+            if (data.structure_json && data.structure_json !== '[]') {
+                $formRenderArea.formRender({ formData: data.structure_json });
+            } else {
+                $formRenderArea.html('<p class="text-center text-muted">Nenhum campo adicionado.</p>');
+            }
+
+            new bootstrap.Modal(document.getElementById('previewModal')).show();
+        } else {
+            alert("Erro ao carregar o formulário.");
+        }
+    });
+}

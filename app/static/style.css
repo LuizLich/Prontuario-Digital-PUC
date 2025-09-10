@@ -5,15 +5,8 @@ body{
 }
 
 img{
-    max-width: 100px;
-    width: 100%;
-}
-
-.card-img-fix { /*Cards from homepage*/
-    width: 100%;
     height: 120px;
-    object-fit: cover;
-    max-width: none;
+    width: auto;
 }
 
 body::-webkit-scrollbar {
@@ -31,10 +24,53 @@ body::-webkit-scrollbar-thumb {
 .nav-link{
     font-weight: 600;
     color: rgb(255, 255, 255);
+    position: relative;
 }
 
-.navbar-toggler:focus{
+.nav-link:hover, .nav-link.active{
+    color: rgb(107, 207, 207);
+}
+
+.nav-link:hover, .nav-link:focus {
+    color: rgb(107, 207, 207); 
+}
+
+.custom-navbar .nav-link.active {
+    color: rgb(107, 207, 207);
+}
+
+.custom-navbar .dropdown-item.active {
+    color: rgb(107, 207, 207);
+}
+
+@media (min-width: 991px){
+    .nav-link::before{
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 2px;
+        background-color: rgb(75, 164, 216);
+        visibility: hidden;
+        transition: 0.3s ease-in-out;
+    }
+
+    .nav-link:hover::before, .nav-link.active::before{
+        width: 100%;
+        visibility: visible;
+    }
+}
+
+.navbar-toggler{
+    border: none;
+    font-size: 1.25rem;
+}
+
+.navbar-toggler:focus, .btn-close:focus {
     box-shadow: none;
+    outline: none;
 }
 
 .dropdown> .dropdown-menu{
@@ -60,11 +96,6 @@ lni-xmark-circle{
     background-color: rgb(0, 84, 128); 
 }
 
-.nav-link[aria-current="page"] {
-    background-color: #ffffff;
-    color: rgb(0, 84, 128);
-}
-
 .custom-offcanvas {
     background-color:  rgb(0, 84, 128);
 }
@@ -75,10 +106,6 @@ lni-xmark-circle{
 
 .custom-offcanvas .dropdown-item:hover {
     color: #000000;
-}
-
-.nav-link:hover, .nav-link:focus {
-    color: rgb(107, 207, 207); 
 }
 
 .menu-hamburger{
@@ -148,3 +175,24 @@ td.clickable-cell {
   background-color: #fff;
   font-family: 'Poppins', sans-serif;
 }
+
+.card-hover {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .card-hover:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 1rem 2rem rgba(0,0,0,0.25); /* sombra mais forte */
+  }
+  .icon-circle {
+    background: linear-gradient(135deg, #e9f7fb, #ffffff);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;   /* maior */
+    height: 100px;  /* maior */
+    font-size: 2.5rem; /* ícone maior */
+  }
+  .card {
+    min-height: 380px; /* aumenta altura mínima */
+  }
