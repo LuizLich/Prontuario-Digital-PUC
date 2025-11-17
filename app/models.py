@@ -20,7 +20,6 @@ class User(db.Model):
     registration = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)  # Hashing para segurança
     type_user = db.Column(db.String(20), nullable=False)  # Exemplo: 'admin', 'estagiário'
-    birthday = db.Column(db.Date, nullable=False)
 
     def __repr__(self):
         return f'<User {self.name}>'

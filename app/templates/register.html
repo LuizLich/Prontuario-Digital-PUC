@@ -1,0 +1,58 @@
+{% extends "auth_base.html" %}
+
+{% block title %}Criar Conta{% endblock %}
+
+{% block content %}
+<h3 class="text-white text-center fw-bold mb-4">Criar Conta</h3>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }} text-center fw-bold py-3 shadow-lg border-2"
+                 style="font-size: 1.1rem; border-radius: 12px;">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<form method="POST" action="/register">
+
+    <div class="mb-3 text-white">
+        <label class="form-label">Nome</label>
+        <input type="text" name="name" class="form-control" required>
+    </div>
+
+    <div class="mb-3 text-white">
+        <label class="form-label">Email</label>
+        <input type="email" name="email" class="form-control" required>
+    </div>
+
+    <div class="mb-3 text-white">
+        <label class="form-label">Registro (RA / Matrícula)</label>
+        <input type="text" name="registration" class="form-control" required>
+    </div>
+
+    <div class="mb-3 text-white">
+        <label class="form-label">Senha</label>
+        <input type="password" name="password" class="form-control" required>
+    </div>
+
+    <div class="mb-3 text-white">
+        <label class="form-label">Tipo de Usuário</label>
+        <select class="form-select" name="type_user" required>
+            <option value="admin">Administrador</option>
+            <option value="intern">Estagiário</option>
+            <option value="supervisor">Supervisor</option>
+        </select>
+    </div>
+
+    <button class="btn btn-light w-100 mt-2" type="submit">Registrar</button>
+
+    <div class="text-center mt-3">
+        <a href="/login" class="text-white">Já tem conta? Fazer login</a>
+    </div>
+
+</form>
+{% endblock %}

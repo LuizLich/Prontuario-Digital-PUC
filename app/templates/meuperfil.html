@@ -1,58 +1,62 @@
 {% extends 'base.html' %}
 
-{% block title %}Meu perfil{% endblock %}
+{% block title %}Meu Perfil{% endblock %}
+
 {% block content %}
-<section id="welcome" class="py-5">
-    <div class="container px-4">
-        <div class="row">
-            <div class="col-md-12">
-                <h1 class="py-2 text-center fw-bold">Configurações de perfil</h1>
-            </div>
-            <div class="container rounded bg-white mt-5 mb-5">
-                <div class="row d-flex flex-column align-items-center text-center p-3 py-5">
-                    <div class="col-md-3 border-right">
-                    </div>
-                    <div class="col-md-5 border-right">
-                        <div class="p-3 py-5">
-                            <div class="row mt-2">
-                                <div class="col-md-6"><label class="labels">Nome</label><input type="text"
-                                        class="form-control" placeholder="Primeiro nome" value=""></div>
-                                <div class="col-md-6"><label class="labels">Sobrenome</label><input type="text"
-                                        class="form-control" value="" placeholder="Sobrenome"></div>
-                            </div>
-                            <div class="row mt-3">
-                                <div class="col-md-12"><label class="labels">Email</label><input type="text"
-                                        class="form-control" placeholder="Endereço de email" value=""></div>
-                            </div>
-                            <div class="row mt-3">
-                                <div class="col-md-6"><label class="labels">Número de telefone</label><input type="text"
-                                        class="form-control" placeholder="Seu número de telefone"></div>
-                                <div class="col-md-3"><label class="labels">CEP</label><input type="text"
-                                        class="form-control" placeholder="CEP" value=""></div>
-                            </div>
-                            <div class="row mt-3">
-                                <div class="col-md-12"><label class="labels">Endereço</label><input type="text"
-                                        class="form-control" placeholder="Endereço" value=""></div>
-                                <div class="col-md-6"><label class="labels">País</label><input type="text"
-                                        class="form-control" placeholder="País" value=""></div>
-                                <div class="col-md-6"><label class="labels">Estado/ Região</label><input type="text"
-                                        class="form-control" value="" placeholder="Estado"></div>
-                            </div>
-                            <div class="mt-5 text-center"><button class="btn btn-primary profile-button"
-                                    type="button">Save Profile</button></div>
+<section class="py-5" style="background: #f5f6fa;">
+    <div class="container">
+
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+
+                <div class="card shadow-lg border-0 rounded-4">
+                    <div class="card-body p-5">
+
+                        <div class="text-center mb-4">
+                            <h3 class="fw-bold mb-0">{{ user.name }}</h3>
+                            <p class="text-muted">Perfil do Usuário</p>
                         </div>
+
+                        <hr>
+
+                        <!-- Campos -->
+                        <div class="mb-3">
+                            <label class="fw-semibold text-primary">ID do Usuário</label>
+                            <input type="text" class="form-control form-control-lg" value="{{ user.users_id }}"
+                                readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="fw-semibold text-primary">Email</label>
+                            <input type="text" class="form-control form-control-lg" value="{{ user.email }}" readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="fw-semibold text-primary">Matrícula</label>
+                            <input type="text" class="form-control form-control-lg" value="{{ user.registration }}"
+                                readonly>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="fw-semibold text-primary">Tipo de Usuário</label>
+                            <input type="text" class="form-control form-control-lg" value="{{ user.type_user }}"
+                                readonly>
+                        </div>
+
+                        <hr>
+
+                        <div class="text-center">
+                            <a href="/" class="btn btn-primary rounded-pill px-5 py-2 fs-5">
+                                Voltar ao Início
+                            </a>
+                        </div>
+
                     </div>
                 </div>
+
             </div>
         </div>
+
     </div>
-    </div>
-    </div>
-    </div>
-    <style>
-        #example_wrapper {
-            font-family: 'Poppins', sans-serif;
-        }
-    </style>
 </section>
 {% endblock %}

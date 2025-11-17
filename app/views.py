@@ -1,13 +1,93 @@
-from flask import Blueprint, render_template, redirect, url_for, request, jsonify
+from flask import Blueprint, render_template, redirect, url_for, request, jsonify, session, flash
+from werkzeug.security import generate_password_hash, check_password_hash
 from app.database import db
 from app.models import Paciente, User, Form
+from app.auth import login_required
 
 main = Blueprint('main', __name__)
 
 @main.route("/")
 @main.route("/homepage")
 def homepage():
-    return render_template("homepage.html")
+    user_name = session.get("user_name", "")
+    return render_template("homepage.html", user_name=user_name)
+
+@main.before_app_request
+def require_login_for_every_page():
+    if request.endpoint is None:
+        return
+
+    public_endpoints = {
+        "main.login",
+        "main.register",
+        "static"
+    }
+
+    # Se o usuário não está logado e tenta acessar alguma rota protegida
+    if request.endpoint not in public_endpoints and "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+@main.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        registration = request.form['registration']
+        password = request.form['password']
+        type_user = request.form['type_user']
+
+        # Hash da senha
+        hashed_pw = generate_password_hash(password)
+
+        # Verificação de duplicidade
+        existing_email = User.query.filter_by(email=email).first()
+        existing_reg = User.query.filter_by(registration=registration).first()
+        existing_name = User.query.filter_by(name=name).first()
+
+        if existing_email or existing_reg or existing_name:
+            flash("Nome, email ou matrícula já estão cadastrados!")
+            return redirect('/register')
+
+        new_user = User(
+            name=name,
+            email=email,
+            registration=registration,
+            password=hashed_pw,
+            type_user=type_user
+        )
+
+        db.session.add(new_user)
+        db.session.commit()
+
+        flash("Conta criada com sucesso! Faça login.")
+        return redirect('/login')
+
+    return render_template('register.html')
+
+@main.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+
+        user = User.query.filter_by(email=email).first()
+
+        if not user or not check_password_hash(user.password, password):
+            flash("Email ou senha incorretos!", "danger")
+            return redirect(url_for('main.login'))
+
+        session['user_id'] = user.users_id
+        session['user_name'] = user.name
+        session['user_type'] = user.type_user
+
+        return redirect(url_for('main.homepage'))
+
+    return render_template('login.html')
+
+@main.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('main.login'))
 
 @main.route('/pacientes')
 def pacientes():
@@ -25,7 +105,14 @@ def prontuariopaciente():
 
 @main.route('/meuperfil')
 def meuperfil():
-    return render_template('meuperfil.html')
+    user_id = session.get("user_id")
+
+    if not user_id:
+        return redirect(url_for("main.login"))
+
+    user = User.query.get(user_id)
+
+    return render_template('meuperfil.html', user=user)
 
 @main.route('/sobre')
 def sobre():
