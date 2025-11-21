@@ -17,7 +17,7 @@ $(document).ready(function () {
     });
 });
 
-/* Active */
+// Active
 document.querySelectorAll('.nav-link:not(.dropdown-toggle)').forEach(link => {
     if (link.href === window.location.href) {
         link.classList.add('active');
@@ -39,6 +39,35 @@ document.querySelectorAll('.dropdown-menu .dropdown-item').forEach(link => {
     }
 });
 
+// Forms
+function togglePassword() {
+    const input = document.getElementById("passwordInput");
+    const icon = document.getElementById("eyeIcon");
+
+    if (input.type === "password") {
+        input.type = "text";
+        icon.classList.remove("bi-eye-slash");
+        icon.classList.add("bi-eye");
+    } else {
+        input.type = "password";
+        icon.classList.remove("bi-eye");
+        icon.classList.add("bi-eye-slash");
+    }
+}
+
+$(document).ready(function () {
+    $('#supervisor_nome').select2({
+        theme: 'bootstrap-5',
+        placeholder: 'Selecione o supervisor',
+        allowClear: true
+    });
+
+    $('#estagiario_nome').select2({
+        theme: 'bootstrap-5',
+        placeholder: 'Selecione o estagiário',
+        allowClear: true
+    });
+});
 
 // Novo paciente
 document.addEventListener('DOMContentLoaded', function () {
@@ -99,27 +128,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Calcular idade automaticamente a partir da data de nascimento
-    const dataNascimentoInput = document.getElementById('data_nascimento');
-    const idadeInput = document.getElementById('idade');
-
-    if (dataNascimentoInput && idadeInput) {
-        dataNascimentoInput.addEventListener('change', function () {
-            if (this.value) {
-                const hoje = new Date();
-                const nascimento = new Date(this.value);
-                let idade = hoje.getFullYear() - nascimento.getFullYear();
-                const mes = hoje.getMonth() - nascimento.getMonth();
-                if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) {
-                    idade--;
-                }
-                idadeInput.value = idade >= 0 ? idade : '';
-            } else {
-                idadeInput.value = '';
-            }
-        });
-    }
-
     // Validação básica no submit para os campos "Outra" (Vanilla JS)
     // O ID do formulário no HTML é 'formNovoPaciente', não 'novoPacienteForm'
     const formNovoPacienteVanilla = document.getElementById('formNovoPaciente');
@@ -142,102 +150,187 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+const formNovo = document.getElementById("formNovoPaciente");
+if (formNovo) {
+    formNovo.addEventListener("submit", async function (event) {
+        event.preventDefault();
 
-document.addEventListener('DOMContentLoaded', function () {
-    // Habilitar/desabilitar e tornar obrigatório o campo de texto "Outra" para Raça/Etnia
-    const racaRadios = document.querySelectorAll('input[name="raca_etnia"]');
-    const racaOutraTexto = document.getElementById('raca_outra_texto');
+        let supervisor_id = document.getElementById("supervisor_nome").value;
+        let intern_id = document.getElementById("estagiario_nome").value;
+        
+        let prontuario_id = document.getElementById("prontuarioSelecionado")?.value;
 
-    if (racaRadios.length > 0 && racaOutraTexto) { // Verifica se os elementos existem
-        const racaOutraRadio = document.getElementById('raca_outra_radio');
-        racaRadios.forEach(radio => {
-            radio.addEventListener('change', function() {
-                if (this.id === 'raca_outra_radio' && this.checked) {
-                    racaOutraTexto.disabled = false;
-                    racaOutraTexto.required = true;
-                    racaOutraTexto.focus();
-                } else {
-                    racaOutraTexto.disabled = true;
-                    racaOutraTexto.required = false;
-                    racaOutraTexto.value = '';
+        // --- NOVOS CAMPOS DE DATA ---
+        let data_avaliacao = document.getElementById("data_avaliacao").value;
+        let data_alta = document.getElementById("data_alta").value;
+
+        let nome = document.getElementById("nome").value;
+        let cpf = document.getElementById("cpf").value;
+        let rg = document.getElementById("rg").value; // --- NOVO ---
+        
+        let data_nascimento = document.getElementById("data_nascimento").value;
+        let celular = document.getElementById("celular").value;
+        // Telefone foi removido
+        let email = document.getElementById("email").value;
+
+        let genero = document.querySelector("input[name='genero']:checked")?.value || null;
+        let raca_etnia = document.querySelector("input[name='raca_etnia']:checked")?.value || null; 
+
+        let situacao_profissional = document.querySelector("input[name='situacao_profissional']:checked")?.value || null;
+        
+        let estado_civil = document.getElementById("estado_civil").value;
+        let escolaridade = document.getElementById("escolaridade").value;
+
+        let endereco = document.getElementById("endereco").value;
+        let bairro = document.getElementById("bairro")?.value;
+        let cep = document.getElementById("cep")?.value;       // --- NOVO ---
+        let cidade = document.getElementById("cidade").value; 
+        let estado = document.getElementById("estado")?.value; // --- NOVO ---
+
+        let situacao_outra_texto = document.getElementById("situacao_outra_texto")?.value || null;
+        
+        // Lógica para Raça "Outra"
+        if (raca_etnia === "Outra") {
+            let raca_texto = document.getElementById("raca_outra_texto")?.value;
+            if(raca_texto) raca_etnia = raca_texto;
+        }
+
+        // Captura do Prontuário Dinâmico
+        let prontuario_json = {};
+        if ($('#renderedFormContainer').length) {
+             $('#renderedFormContainer').find('input, select, textarea').each(function () {
+                const name = $(this).attr('name');
+                if (name) {
+                    if ($(this).is(':radio') && !$(this).is(':checked')) return;
+                    if ($(this).is(':checkbox')) {
+                        if (!prontuario_json[name]) prontuario_json[name] = [];
+                        if ($(this).is(':checked')) prontuario_json[name].push($(this).val());
+                    } else {
+                        prontuario_json[name] = $(this).val();
+                    }
                 }
             });
-        });
-        // Checagem inicial para o caso da página ser recarregada com "Outra" selecionado
-        if (racaOutraRadio && racaOutraRadio.checked) {
-            racaOutraTexto.disabled = false;
-            racaOutraTexto.required = true;
-        } else {
-            racaOutraTexto.disabled = true;
-            racaOutraTexto.required = false;
         }
-    }
 
-    // Habilitar/desabilitar e tornar obrigatório o campo de texto "Outra" para Situação Profissional
-    const situacaoRadios = document.querySelectorAll('input[name="situacao_profissional"]');
-    const situacaoOutraTexto = document.getElementById('situacao_outra_texto');
-    if (situacaoRadios.length > 0 && situacaoOutraTexto) { // Verifica se os elementos existem
-        const situacaoOutraRadio = document.getElementById('situacao_outra_radio');
-        situacaoRadios.forEach(radio => {
-            radio.addEventListener('change', function() {
-                if (this.id === 'situacao_outra_radio' && this.checked) {
-                    situacaoOutraTexto.disabled = false;
-                    situacaoOutraTexto.required = true; 
-                    situacaoOutraTexto.focus();
-                } else {
-                    situacaoOutraTexto.disabled = true;
-                    situacaoOutraTexto.required = false; 
-                    situacaoOutraTexto.value = '';
-                }
+        let payload = {
+            supervisor_id,
+            intern_id,
+            prontuario_id,
+            prontuario_json,
+            
+            data_avaliacao,
+            data_alta,     
+            
+            nome,
+            cpf,
+            rg,             
+            data_nascimento,
+            celular,
+            email,
+            genero,
+            raca_etnia, 
+            estado_civil,
+            escolaridade,
+            situacao_profissional,
+            endereco,
+            bairro,
+            cep,            
+            cidade, 
+            estado,        
+            situacao_outra_texto
+        };
+
+        try {
+            const response = await fetch("/salvarpaciente", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(payload)
             });
-        });
-        // Checagem inicial
-        if (situacaoOutraRadio && situacaoOutraRadio.checked) {
-            situacaoOutraTexto.disabled = false;
-            situacaoOutraTexto.required = true;
-        } else {
-            situacaoOutraTexto.disabled = true;
-            situacaoOutraTexto.required = false;
-        }
-    }
+            
+            const result = await response.json();
 
-    // Calcular idade automaticamente a partir da data de nascimento
-    const dataNascimentoInput = document.getElementById('data_nascimento');
-    const idadeInput = document.getElementById('idade');
-
-    if (dataNascimentoInput && idadeInput) {
-        dataNascimentoInput.addEventListener('change', function() {
-            if (this.value) {
-                const hoje = new Date();
-                const nascimento = new Date(this.value);
-                let idade = hoje.getFullYear() - nascimento.getFullYear();
-                const mes = hoje.getMonth() - nascimento.getMonth();
-                if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) {
-                    idade--;
-                }
-                idadeInput.value = idade >= 0 ? idade : '';
+            if (result.success) {
+                alert("Paciente salvo com sucesso!");
+                window.location.href = "/pacientes";
             } else {
-                idadeInput.value = '';
+                alert("Erro: " + result.message);
             }
-        });
-    }
+        } catch (error) {
+            console.error(error);
+            alert("Erro na requisição.");
+        }
+    });
+}
 
-    // Validação básica no submit para os campos "Outra" (Vanilla JS)
-    // O ID do formulário no HTML é 'formNovoPaciente'
-    const formNovoPacienteVanilla = document.getElementById('formNovoPaciente'); 
-    if (formNovoPacienteVanilla) {
-        formNovoPacienteVanilla.addEventListener('submit', function(event) {
-            // A validação HTML5 com 'required' já deve tratar isso.
-            // O preventDefault será chamado pela lógica jQuery de submissão AJAX.
-            if (racaOutraTexto && !racaOutraTexto.disabled && !racaOutraTexto.value.trim()) {
-                racaOutraTexto.focus();
+const formEditar = document.getElementById("formEditarPaciente");
+if (formEditar) {
+    formEditar.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const paciente_id = document.getElementById("paciente_id").value;
+
+        let payload = {
+            supervisor_id: document.getElementById("supervisor_nome").value,
+            intern_id: document.getElementById("estagiario_nome").value,
+
+            data_avaliacao: document.getElementById("data_avaliacao").value,
+            data_alta: document.getElementById("data_alta").value,
+
+            nome: document.getElementById("nome").value,
+            cpf: document.getElementById("cpf").value,
+            rg: document.getElementById("rg").value,
+
+            data_nascimento: document.getElementById("data_nascimento").value,
+            celular: document.getElementById("celular").value,
+            email: document.getElementById("email").value,
+
+            genero: document.querySelector("input[name='genero']:checked")?.value,
+            estado_civil: document.getElementById("estado_civil").value,
+            escolaridade: document.getElementById("escolaridade").value,
+
+            endereco: document.getElementById("endereco").value,
+            bairro: document.getElementById("bairro").value,
+            cep: document.getElementById("cep").value,
+            cidade: document.getElementById("cidade").value,
+            estado: document.getElementById("estado").value,
+
+            raca_etnia: document.querySelector("input[name='raca_etnia']:checked")?.value,
+            situacao_profissional: document.querySelector("input[name='situacao_profissional']:checked")?.value,
+            situacao_outra_texto: document.getElementById("situacao_outra_texto").value
+        };
+
+        // Raça "Outra"
+        if (payload.raca_etnia === "Outra") {
+            payload.raca_etnia = document.getElementById("raca_outra_texto").value;
+        }
+
+        // Profissão "Outra"
+        if (payload.situacao_profissional === "Outra") {
+            payload.situacao_profissional = document.getElementById("situacao_outra_texto").value;
+        }
+
+        try {
+            const response = await fetch(`/atualizar_paciente/${paciente_id}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                alert("Paciente atualizado com sucesso!");
+                window.location.href = "/pacientes";
+            } else {
+                alert("Erro: " + result.message);
             }
-            if (situacaoOutraTexto && !situacaoOutraTexto.disabled && !situacaoOutraTexto.value.trim()) {
-                situacaoOutraTexto.focus();
-            }
-        });
-    }
-});
+
+        } catch (error) {
+            console.error(error);
+            alert("Erro ao enviar dados.");
+        }
+    });
+}
 
 // Lógica jQuery FormBuilder
 jQuery($ => {

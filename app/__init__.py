@@ -5,14 +5,12 @@ from flask_migrate import Migrate
 from dotenv import load_dotenv
 
 def create_app():
-    # Carrega as variáveis de ambiente do arquivo .env
     load_dotenv()
 
     app = Flask(__name__)
 
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
-    # Se quiser, adiciona um fallback para evitar crash em debug
     if not app.config['SECRET_KEY']:
         raise RuntimeError("SECRET_KEY não definida no .env! Adicione SECRET_KEY no seu arquivo .env")
 

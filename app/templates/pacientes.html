@@ -8,9 +8,17 @@
             <div class="col-md-12">
                 <h1 class="py-2 text-center fw-bold">Pacientes</h1>
             </div>
-            <a href="/novopaciente"><button type="button" class="btn btn-success"><i class="bi bi-person-plus-fill"></i> Adicionar novo paciente</button></a>
-           <div class="table-responsive">
-                <table id="example" class="table table-striped table-hover table-bordered">
+
+            <div class="col-md-12 mb-3">
+                <a href="/novopaciente">
+                    <button type="button" class="btn btn-success">
+                        <i class="bi bi-person-plus-fill"></i> Adicionar novo paciente
+                    </button>
+                </a>
+            </div>
+
+            <div class="table-responsive">
+                <table id="example" class="table table-striped table-hover table-bordered align-middle">
                     <thead class="table-dark">
                         <tr>
                             <th>ID</th>
@@ -19,19 +27,59 @@
                             <th>Data de Nascimento</th>
                             <th>Estagiário</th>
                             <th>Supervisor</th>
+                            <th class="text-center">Ações</th>
                         </tr>
                     </thead>
                     <tbody>
-                      {% for paciente in pacientes %}
-                      <tr>
-                          <td>{{ paciente.patients_id }}</td>
-                          <td>{{ paciente.name }}</td>
-                          <td>{{ paciente.cpf }}</td>
-                          <td>{{ paciente.birthday.strftime('%d/%m/%Y') }}</td>
-                          <td>{{ paciente.intern }}</td>
-                          <td>{{ paciente.supervisor }}</td>
-                      </tr>
-                      {% endfor %}              
+                        {% for paciente in pacientes %}
+                        <tr>
+                            <td>{{ paciente.patients_id }}</td>
+                            <td>
+                                <a href="/paciente/{{ paciente.patients_id }}">
+                                    {{ paciente.name }}
+                                </a>
+                            </td>
+
+                            <td>{{ paciente.cpf }}</td>
+
+                            <td>
+                                {% if paciente.birthday %}
+                                {{ paciente.birthday.strftime('%d/%m/%Y') }}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if paciente.intern %}
+                                {{ paciente.intern.name }}
+                                {% else %}
+                                <span class="text-muted">Não informado</span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if paciente.supervisor %}
+                                {{ paciente.supervisor.name }}
+                                {% else %}
+                                <span class="text-muted">Não informado</span>
+                                {% endif %}
+                            </td>
+
+                            <td class="text-center">
+                                <a href="/editar_paciente/{{ paciente.patients_id }}"
+                                    class="btn btn-primary btn-sm me-1" title="Editar">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+
+                                <a href="/excluir_paciente/{{ paciente.patients_id }}" class="btn btn-danger btn-sm"
+                                    title="Excluir"
+                                    onclick="return confirm('Tem certeza que deseja excluir o paciente {{ paciente.name }}? Esta ação não pode ser desfeita.');">
+                                    <i class="bi bi-trash-fill"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>

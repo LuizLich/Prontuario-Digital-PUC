@@ -6,15 +6,15 @@
 <h3 class="text-white text-center fw-bold mb-4">Bem-vindo(a)!</h3>
 
 {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, message in messages %}
-            <div class="alert alert-{{ category }} text-center fw-bold py-3 shadow-lg border-2 mt-3"
-                 style="font-size: 1.1rem; border-radius: 12px;">
-                <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="alert alert-{{ category }} text-center fw-bold py-3 shadow-lg border-2 mt-3"
+    style="font-size: 1.1rem; border-radius: 12px;">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+    {{ message }}
+</div>
+{% endfor %}
+{% endif %}
 {% endwith %}
 
 <form method="POST" action="/login">
@@ -25,17 +25,24 @@
 
     <div class="mb-3 text-white">
         <label class="form-label fw-semibold">Senha</label>
-        <input type="password" name="password" class="form-control form-control-lg" required>
-    </div>
 
-    <div class="text-center mt-2">
-        <a href="#" class="text-white-50" style="font-size: 0.9rem;">Esqueceu a senha?</a>
+        <div class="input-group">
+            <input type="password" id="passwordInput" name="password" class="form-control form-control-lg" required>
+
+            <span class="input-group-text bg-white" style="cursor: pointer;" onclick="togglePassword()">
+                <i id="eyeIcon" class="bi bi-eye-slash" style="color: black;"></i>
+            </span>
+        </div>
     </div>
 
     <button type="submit" class="btn btn-light w-100 btn-lg fw-bold mt-2">
         Entrar
     </button>
 
+    <div class="text-center mt-2">
+        <a href="#" class="text-white-50" style="font-size: 0.9rem;">Esqueceu a senha?</a>
+    </div>
+    
     <div class="text-center mt-3">
         <a href="/register" class="text-white">Não tem conta? Registre-se aqui</a>
     </div>

@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block title %}Paciente {{ paciente.name }}{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+
+        <h1 class="mb-4 fw-bold">Informações do Paciente</h1>
+
+        <div class="card shadow-lg">
+            <div class="card-body">
+
+                <h3 class="fw-bold mb-4">{{ paciente.name }}</h3>
+
+                <div class="row g-4">
+
+                    <div class="col-md-6">
+                        <h5 class="fw-bold">Identificação</h5>
+                        <p><strong>ID:</strong> {{ paciente.patients_id }}</p>
+                        <p><strong>Nome:</strong> {{ paciente.name }}</p>
+                        <p><strong>CPF:</strong> {{ paciente.cpf }}</p>
+                        <p><strong>Data de Nascimento:</strong>
+                            {% if paciente.birthday %}
+                                {{ paciente.birthday.strftime('%d/%m/%Y') }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h5 class="fw-bold">Contato</h5>
+                        <p><strong>Telefone:</strong> {{ paciente.number or '-' }}</p>
+                        <p><strong>Email:</strong> {{ paciente.email or '-' }}</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h5 class="fw-bold">Responsáveis</h5>
+                        <p><strong>Estagiário:</strong>
+                            {% if paciente.intern %}
+                                {{ paciente.intern.name }}
+                            {% else %}
+                                <span class="text-muted">Não informado</span>
+                            {% endif %}
+                        </p>
+
+                        <p><strong>Supervisor:</strong>
+                            {% if paciente.supervisor %}
+                                {{ paciente.supervisor.name }}
+                            {% else %}
+                                <span class="text-muted">Não informado</span>
+                            {% endif %}
+                        </p>
+
+                        <p><strong>Data da consulta:</strong> {{ paciente.evaluation_date or '-' }}</p>
+                        <p><strong>Data da alta:</strong> {{ paciente.discharge_date or '-' }}</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h5 class="fw-bold">Informações Pessoais</h5>
+                        <p><strong>Sexo:</strong> {{ paciente.gender or '-' }}</p>
+                        <p><strong>Estado civil:</strong> {{ paciente.marital_status or '-' }}</p>
+                        <p><strong>Profissão:</strong> {{ paciente.profession or '-' }}</p>
+                        <p><strong>Escolaridade:</strong> {{ paciente.education_level or '-' }}</p>
+                    </div>
+
+                    <div class="col-12">
+                        <h5 class="fw-bold">Endereço</h5>
+                        <p><strong>Endereço:</strong> {{ paciente.address or '-' }}</p>
+                        <p><strong>Cidade:</strong> {{ paciente.city or '-' }}</p>
+                        <p><strong>Estado:</strong> {{ paciente.state or '-' }}</p>
+                        <p><strong>CEP:</strong> {{ paciente.zip_code or '-' }}</p>
+                    </div>
+                </div>
+
+                <hr>
+
+                <a href="/editar_paciente/{{ paciente.patients_id }}" class="btn btn-primary me-2">
+                    <i class="bi bi-pencil-square"></i> Editar informações
+                </a>
+
+                <a href="/pacientes" class="btn btn-secondary">
+                    Voltar à lista
+                </a>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

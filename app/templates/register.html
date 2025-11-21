@@ -35,8 +35,15 @@
     </div>
 
     <div class="mb-3 text-white">
-        <label class="form-label">Senha</label>
-        <input type="password" name="password" class="form-control" required>
+        <label class="form-label fw-semibold">Senha</label>
+
+        <div class="input-group">
+            <input type="password" id="passwordInput" name="password" class="form-control form-control-lg" required>
+
+            <span class="input-group-text bg-white" style="cursor: pointer;" onclick="togglePassword()">
+                <i id="eyeIcon" class="bi bi-eye-slash" style="color: black;"></i>
+            </span>
+        </div>
     </div>
 
     <div class="mb-3 text-white">

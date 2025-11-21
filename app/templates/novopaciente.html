@@ -10,17 +10,34 @@
         <h5 class="py-2 fw-bold h5">Informações clínicas</h5>
         <div class="row mb-3">
             <div class="col-md-6">
-                <label for="supervisor_nome" class="form-label">Nome do supervisor: <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="supervisor_nome" name="supervisor_nome_input" placeholder="Digite o nome do supervisor" required>
+                <label for="supervisor_nome" class="form-label">
+                    Nome do supervisor: <span class="text-danger">*</span>
+                </label>
+                <select class="form-select" id="supervisor_nome" name="supervisor_nome_input" required>
+                    <option value="" disabled selected>Selecione o supervisor...</option>
+                    {% for supervisor in supervisors %}
+                    <option value="{{ supervisor.users_id }}">{{ supervisor.name }}</option>
+                    {% endfor %}
+                </select>
             </div>
+
             <div class="col-md-6">
-                <label for="estagiario_nome" class="form-label">Nome do estagiário: <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="estagiario_nome" name="intern_nome_input" placeholder="Digite o nome do estagiário" required>
+                <label for="estagiario_nome" class="form-label">
+                    Nome do estagiário: <span class="text-danger">*</span>
+                </label>
+                <select class="form-select" id="estagiario_nome" name="intern_nome_input" required>
+                    <option value="" disabled selected>Selecione o estagiário...</option>
+                    {% for intern in interns %}
+                    <option value="{{ intern.users_id }}">{{ intern.name }}</option>
+                    {% endfor %}
+                </select>
             </div>
         </div>
+
         <div class="row mb-3">
             <div class="col-md-6">
-                <label for="data_avaliacao" class="form-label">Data da avaliação: <span class="text-danger">*</span></label>
+                <label for="data_avaliacao" class="form-label">Data da avaliação: <span
+                        class="text-danger">*</span></label>
                 <input type="date" class="form-control" id="data_avaliacao" name="data_avaliacao" required>
             </div>
             <div class="col-md-6">
@@ -29,7 +46,7 @@
             </div>
         </div>
 
-        <hr class="my-3"> 
+        <hr class="my-3">
         <h5 class="py-2 fw-bold h5">Identificação do paciente</h5>
 
         <div class="row mb-3">
@@ -38,13 +55,17 @@
                 <input type="text" class="form-control" id="nome" name="nome" required>
             </div>
         </div>
-        
+
         <div class="row mb-3">
-            <div class="col-md-8">
+            <div class="col-md-3">
+                <label for="cep" class="form-label">CEP: <span class="text-danger">*</span></label>
+                <input type="tel" class="form-control" id="cep" name="cep" placeholder="00000-000" maxlength="9" required>
+            </div>
+            <div class="col-md-6">
                 <label for="endereco" class="form-label">Endereço: <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" id="endereco" name="endereco" required>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label for="bairro" class="form-label">Bairro: <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" id="bairro" name="bairro" required>
             </div>
@@ -56,12 +77,41 @@
                 <input type="text" class="form-control" id="cidade" name="cidade" required>
             </div>
             <div class="col-md-3">
-                <label for="telefone" class="form-label">Telefone: <span class="text-danger">*</span></label>
-                <input type="tel" class="form-control" id="telefone" name="telefone" placeholder="(XX) XXXX-XXXX" required>
+                <label for="estado" class="form-label">Estado (UF): <span class="text-danger">*</span></label>
+                <select class="form-select" id="estado" name="estado" required>
+                    <option value="" disabled selected>Selecione...</option>
+                    <option value="AC">Acre</option>
+                    <option value="AL">Alagoas</option>
+                    <option value="AP">Amapá</option>
+                    <option value="AM">Amazonas</option>
+                    <option value="BA">Bahia</option>
+                    <option value="CE">Ceará</option>
+                    <option value="DF">Distrito Federal</option>
+                    <option value="ES">Espírito Santo</option>
+                    <option value="GO">Goiás</option>
+                    <option value="MA">Maranhão</option>
+                    <option value="MT">Mato Grosso</option>
+                    <option value="MS">Mato Grosso do Sul</option>
+                    <option value="MG">Minas Gerais</option>
+                    <option value="PA">Pará</option>
+                    <option value="PB">Paraíba</option>
+                    <option value="PR">Paraná</option>
+                    <option value="PE">Pernambuco</option>
+                    <option value="PI">Piauí</option>
+                    <option value="RJ">Rio de Janeiro</option>
+                    <option value="RN">Rio Grande do Norte</option>
+                    <option value="RS">Rio Grande do Sul</option>
+                    <option value="RO">Rondônia</option>
+                    <option value="RR">Roraima</option>
+                    <option value="SC">Santa Catarina</option>
+                    <option value="SP">São Paulo</option>
+                    <option value="SE">Sergipe</option>
+                    <option value="TO">Tocantins</option>
+                </select>
             </div>
             <div class="col-md-4">
                 <label for="celular" class="form-label">Celular: <span class="text-danger">*</span></label>
-                <input type="tel" class="form-control" id="celular" name="celular" placeholder="(XX) XXXXX-XXXX" required>
+                <input type="tel" class="form-control" id="celular" name="celular" placeholder="(XX) XXXXX-XXXX" maxlength="15" required>
             </div>
         </div>
 
@@ -74,10 +124,6 @@
                 <label for="data_nascimento" class="form-label">Data de Nascimento: <span class="text-danger">*</span></label>
                 <input type="date" class="form-control" id="data_nascimento" name="data_nascimento" required>
             </div>
-            <div class="col-md-2">
-                <label for="idade" class="form-label">Idade: <span class="text-danger">*</span></label>
-                <input type="number" class="form-control" id="idade" name="idade" readonly required>
-            </div>
         </div>
 
         <div class="row mb-3">
@@ -87,7 +133,7 @@
             </div>
             <div class="col-md-6">
                 <label for="cpf" class="form-label">CPF: <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="cpf" name="cpf" placeholder="XXX.XXX.XXX-XX" required>
+                <input type="tel" class="form-control" id="cpf" name="cpf" placeholder="XXX.XXX.XXX-XX" maxlength="14" required>
             </div>
         </div>
 
@@ -150,7 +196,7 @@
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio" name="raca_etnia" id="raca_outra_radio" value="Outra" required>
                         <label class="form-check-label" for="raca_outra_radio">Outra:</label>
-                        <input type="text" class="form-control form-control-sm d-inline-block ms-1" style="width: 150px;" id="raca_outra_texto" name="raca_outra_texto" disabled> 
+                        <input type="text" class="form-control form-control-sm d-inline-block ms-1" style="width: 150px;" id="raca_outra_texto" name="raca_outra_texto" disabled>
                     </div>
                 </div>
             </div>
@@ -209,24 +255,24 @@
                 </div>
             </div>
         </div>
-        
+
         <hr class="my-4">
 
         <h2 class="py-2 fw-bold h4">Prontuário</h2>
         <div class="row mb-3">
             <div class="col-md-6">
                 <label for="prontuarioSelecionado" class="form-label">Selecione o tipo de Prontuário: <span class="text-danger">*</span></label>
-                <select class="form-select" id="prontuarioSelecionado" name="prontuario_id_selecionado" required>
+                <select class="form-select" id="prontuarioSelecionado" name="prontuario_id_selecionado">
                     <option selected disabled value="">Selecione...</option>
                     {% for form_opt in form_options %}
-                        <option value="{{ form_opt.id }}">{{ form_opt.title }}</option>
+                    <option value="{{ form_opt.id }}">{{ form_opt.title }}</option>
                     {% endfor %}
                 </select>
             </div>
         </div>
 
         <div id="renderedFormTitleContainer" class="mt-3" style="display: none;">
-             <h3 id="renderedFormTitleText" class="h5"></h3>
+            <h3 id="renderedFormTitleText" class="h5"></h3>
         </div>
         <div id="renderedFormContainer" class="mt-2 p-3 border rounded" style="display: none;">
         </div>

@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Paciente{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="col-md-12">
+        <h1 class="py-2 text-center fw-bold">Editar Paciente: {{ paciente.name }}</h1>
+    </div>
+
+    <input type="hidden" id="paciente_id" value="{{ paciente.patients_id }}">
+
+    <form id="formEditarPaciente">
+        <h5 class="py-2 fw-bold h5">Informações clínicas</h5>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="supervisor_nome" class="form-label">
+                    Nome do supervisor: <span class="text-danger">*</span>
+                </label>
+                <select class="form-select" id="supervisor_nome" name="supervisor_nome_input" required>
+                    <option value="" disabled>Selecione o supervisor...</option>
+                    {% for supervisor in supervisors %}
+                    <option value="{{ supervisor.users_id }}" 
+                        {% if paciente.supervisor_id == supervisor.users_id %}selected{% endif %}>
+                        {{ supervisor.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <label for="estagiario_nome" class="form-label">
+                    Nome do estagiário: <span class="text-danger">*</span>
+                </label>
+                <select class="form-select" id="estagiario_nome" name="intern_nome_input" required>
+                    <option value="" disabled>Selecione o estagiário...</option>
+                    {% for intern in interns %}
+                    <option value="{{ intern.users_id }}"
+                        {% if paciente.intern_id == intern.users_id %}selected{% endif %}>
+                        {{ intern.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="data_avaliacao" class="form-label">Data da avaliação: <span class="text-danger">*</span></label>
+                <input type="date" class="form-control" id="data_avaliacao" name="data_avaliacao" value="{{ paciente.evaluation_date }}" required>
+            </div>
+            <div class="col-md-6">
+                <label for="data_alta" class="form-label">Data da alta:</label>
+                <input type="date" class="form-control" id="data_alta" name="data_alta" value="{{ paciente.discharge_date or '' }}">
+            </div>
+        </div>
+
+        <hr class="my-3">
+        <h5 class="py-2 fw-bold h5">Identificação do paciente</h5>
+
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <label for="nome" class="form-label">Nome Completo: <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="nome" name="nome" value="{{ paciente.name }}" required>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <label for="cep" class="form-label">CEP: <span class="text-danger">*</span></label>
+                <input type="tel" class="form-control" id="cep" name="cep" placeholder="00000-000" maxlength="9" value="{{ paciente.zip_code or '' }}" required>
+            </div>
+            <div class="col-md-6">
+                <label for="endereco" class="form-label">Endereço: <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="endereco" name="endereco" value="{{ paciente.address }}" required>
+            </div>
+            <div class="col-md-3">
+                <label for="bairro" class="form-label">Bairro: <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="bairro" name="bairro" value="{{ paciente.neighborhood or '' }}" required> 
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-5">
+                <label for="cidade" class="form-label">Cidade: <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="cidade" name="cidade" value="{{ paciente.city }}" required>
+            </div>
+            <div class="col-md-3">
+                <label for="estado" class="form-label">Estado (UF): <span class="text-danger">*</span></label>
+                <select class="form-select" id="estado" name="estado" required>
+                    <option value="" disabled>Selecione...</option>
+                    {% set estados = ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'] %}
+                    {% for uf in estados %}
+                        <option value="{{ uf }}" {% if paciente.state == uf %}selected{% endif %}>{{ uf }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="celular" class="form-label">Celular: <span class="text-danger">*</span></label>
+                <input type="tel" class="form-control" id="celular" name="celular" value="{{ paciente.number }}" maxlength="15" required>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-7">
+                <label for="email" class="form-label">E-mail: <span class="text-danger">*</span></label>
+                <input type="email" class="form-control" id="email" name="email" value="{{ paciente.email }}" required>
+            </div>
+            <div class="col-md-3">
+                <label for="data_nascimento" class="form-label">Data de Nascimento: <span class="text-danger">*</span></label>
+                <input type="date" class="form-control" id="data_nascimento" name="data_nascimento" value="{{ paciente.birthday }}" required>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="rg" class="form-label">RG: <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="rg" name="rg" value="{{ paciente.rg or '' }}" required>
+            </div>
+            <div class="col-md-6">
+                <label for="cpf" class="form-label">CPF: <span class="text-danger">*</span></label>
+                <input type="tel" class="form-control" id="cpf" name="cpf" value="{{ paciente.cpf }}" maxlength="14" required>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label">Gênero: <span class="text-danger">*</span></label>
+                <div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="genero" id="genero_masculino" value="Masculino" 
+                            {% if paciente.gender == 'Masculino' %}checked{% endif %} required>
+                        <label class="form-check-label" for="genero_masculino">Masculino</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="genero" id="genero_feminino" value="Feminino"
+                            {% if paciente.gender == 'Feminino' %}checked{% endif %} required>
+                        <label class="form-check-label" for="genero_feminino">Feminino</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="genero" id="genero_outro" value="Outro"
+                            {% if paciente.gender == 'Outro' %}checked{% endif %} required>
+                        <label class="form-check-label" for="genero_outro">Outro</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <label for="estado_civil" class="form-label">Estado Civil: <span class="text-danger">*</span></label>
+                <select class="form-select" id="estado_civil" name="estado_civil" required>
+                    <option disabled value="">Selecione...</option>
+                    <option value="Solteiro(a)" {% if paciente.marital_status == 'Solteiro(a)' %}selected{% endif %}>Solteiro(a)</option>
+                    <option value="Casado(a)" {% if paciente.marital_status == 'Casado(a)' %}selected{% endif %}>Casado(a)</option>
+                    <option value="Divorciado(a)" {% if paciente.marital_status == 'Divorciado(a)' %}selected{% endif %}>Divorciado(a)</option>
+                    <option value="Viúvo(a)" {% if paciente.marital_status == 'Viúvo(a)' %}selected{% endif %}>Viúvo(a)</option>
+                    <option value="União Estável" {% if paciente.marital_status == 'União Estável' %}selected{% endif %}>União Estável</option>
+                    <option value="Outro" {% if paciente.marital_status == 'Outro' %}selected{% endif %}>Outro</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-7">
+                <label class="form-label">Raça/Etnia: <span class="text-danger">*</span></label>
+                <div>
+                    {% set racas = ['Branca', 'Parda', 'Negra', 'Amarela', 'Indígena'] %}
+                    {% for r in racas %}
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="raca_etnia" id="raca_{{ r }}" value="{{ r }}"
+                            {% if paciente.race == r %}checked{% endif %} required>
+                        <label class="form-check-label" for="raca_{{ r }}">{{ r }}</label>
+                    </div>
+                    {% endfor %}
+                    
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="raca_etnia" id="raca_outra_radio" value="Outra"
+                            {% if paciente.race not in racas and paciente.race is not none %}checked{% endif %} required>
+                        <label class="form-check-label" for="raca_outra_radio">Outra:</label>
+                        <input type="text" class="form-control form-control-sm d-inline-block ms-1" style="width: 150px;" 
+                            id="raca_outra_texto" name="raca_outra_texto" 
+                            value="{% if paciente.race not in racas %}{{ paciente.race }}{% endif %}"
+                            {% if paciente.race in racas or paciente.race is none %}disabled{% endif %}>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <label for="escolaridade" class="form-label">Grau de Escolaridade: <span class="text-danger">*</span></label>
+                <select class="form-select" id="escolaridade" name="escolaridade" required>
+                    <option disabled value="">Selecione...</option>
+                    <option value="Analfabeto" {% if paciente.education_level == 'Analfabeto' %}selected{% endif %}>Analfabeto</option>
+                    <option value="Ensino Fundamental Incompleto" {% if paciente.education_level == 'Ensino Fundamental Incompleto' %}selected{% endif %}>Ensino Fundamental Incompleto</option>
+                    <option value="Ensino Fundamental Completo" {% if paciente.education_level == 'Ensino Fundamental Completo' %}selected{% endif %}>Ensino Fundamental Completo</option>
+                    <option value="Ensino Médio Incompleto" {% if paciente.education_level == 'Ensino Médio Incompleto' %}selected{% endif %}>Ensino Médio Incompleto</option>
+                    <option value="Ensino Médio Completo" {% if paciente.education_level == 'Ensino Médio Completo' %}selected{% endif %}>Ensino Médio Completo</option>
+                    <option value="Ensino Superior Incompleto" {% if paciente.education_level == 'Ensino Superior Incompleto' %}selected{% endif %}>Ensino Superior Incompleto</option>
+                    <option value="Ensino Superior Completo" {% if paciente.education_level == 'Ensino Superior Completo' %}selected{% endif %}>Ensino Superior Completo</option>
+                    <option value="Pós-graduação" {% if paciente.education_level == 'Pós-graduação' %}selected{% endif %}>Pós-graduação</option>
+                    <option value="Mestrado" {% if paciente.education_level == 'Mestrado' %}selected{% endif %}>Mestrado</option>
+                    <option value="Doutorado" {% if paciente.education_level == 'Doutorado' %}selected{% endif %}>Doutorado</option>
+                    <option value="Outro" {% if paciente.education_level == 'Outro' %}selected{% endif %}>Outro</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <label class="form-label">Profissão/Situação no momento: <span class="text-danger">*</span></label>
+                <div>
+                    {% set profissoes = ['Dona de Casa', 'Trabalho Período Integral ou Meio Período', 'Aposentado', 'Afastado', 'Desempregado', 'Estudante'] %}
+                    
+                    {% for prof in profissoes %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="situacao_profissional" 
+                            id="situacao_{{ loop.index }}" value="{{ prof }}"
+                            {% if paciente.profession == prof %}checked{% endif %} required>
+                        <label class="form-check-label" for="situacao_{{ loop.index }}">{{ prof }}</label>
+                    </div>
+                    {% endfor %}
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="situacao_profissional" id="situacao_outra_radio" value="Outra"
+                        {% if paciente.profession not in profissoes and paciente.profession is not none %}checked{% endif %} required>
+                        <label class="form-check-label" for="situacao_outra_radio">Outra:</label>
+                        <input type="text" class="form-control form-control-sm d-inline-block ms-1" style="width: 200px;" 
+                            id="situacao_outra_texto" name="situacao_outra_texto" 
+                            value="{{ paciente.notes }}"
+                            {% if paciente.profession in profissoes or paciente.profession is none %}disabled{% endif %}>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end py-4">
+            <a href="/pacientes" class="btn btn-secondary me-md-2">Cancelar</a>
+            <button type="submit" class="btn btn-primary bi bi-save"> Salvar alterações</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
