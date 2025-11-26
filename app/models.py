@@ -1,4 +1,5 @@
 from app.database import db
+from datetime import datetime
 
 class Paciente(db.Model):
     __tablename__ = 'patients'
@@ -38,6 +39,38 @@ class Paciente(db.Model):
     def __repr__(self):
         return f'<Paciente {self.name}>'
 
+class MedicalRecord(db.Model):
+    __tablename__ = "medical_records"
+
+    id = db.Column(db.Integer, primary_key=True)
+    patient_id = db.Column(db.Integer, db.ForeignKey("patients.patients_id"), nullable=False)
+    form_id = db.Column(db.Integer, db.ForeignKey("forms.forms_id"), nullable=False)
+
+    record_data = db.Column(db.Text, nullable=False)
+
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    author_id = db.Column(db.Integer, db.ForeignKey("users.users_id"), nullable=True)
+
+    # --- NOVOS CAMPOS PARA EDIÇÃO ---
+    updated_at = db.Column(db.DateTime, nullable=True)
+    updated_by_id = db.Column(db.Integer, db.ForeignKey("users.users_id"), nullable=True)
+
+    # Relacionamentos
+    patient = db.relationship("Paciente", backref="medical_records")
+    form = db.relationship("Form")
+    author = db.relationship("User", foreign_keys=[author_id])
+    
+    # Novo relacionamento para quem editou
+    updated_by = db.relationship("User", foreign_keys=[updated_by_id])
+    
+    def get_record_data_dict(self):
+        """Retorna os dados do prontuário como dicionário Python"""
+        import json
+        try:
+            return json.loads(self.record_data)
+        except:
+            return {}
+        
 class User(db.Model):
     __tablename__ = 'users' 
 
@@ -51,13 +84,24 @@ class User(db.Model):
     def __repr__(self):
         return f'<User {self.name}>'
 
-
 class Form(db.Model):
     __tablename__ = 'forms'
 
     forms_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(255), nullable=False)
     structure_json = db.Column(db.Text, nullable=False)
+
+    # Campo para controle de exclusão lógica
+    active = db.Column(db.Boolean, default=True)
+
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    author_id = db.Column(db.Integer, db.ForeignKey("users.users_id"), nullable=True)
+    
+    updated_at = db.Column(db.DateTime, nullable=True)
+    updated_by_id = db.Column(db.Integer, db.ForeignKey("users.users_id"), nullable=True)
+
+    author = db.relationship("User", foreign_keys=[author_id])
+    updated_by = db.relationship("User", foreign_keys=[updated_by_id])
 
     def __repr__(self):
         return f'<Form {self.title} (ID: {self.forms_id})>'

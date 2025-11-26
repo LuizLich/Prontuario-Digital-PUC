@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Prontuário - {{ paciente.name }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://formbuilder.online/assets/js/form-render.min.js"></script>
+
+    <style>
+        body {
+            background: white;
+            font-size: 11pt;
+            color: #000;
+        }
+
+        .section-header {
+            background-color: #e9ecef;
+            border-bottom: 2px solid #333;
+            padding: 5px 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            -webkit-print-color-adjust: exact;
+        }
+
+        .label-field {
+            font-size: 0.8rem;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-bottom: 0;
+        }
+
+        .value-field {
+            font-weight: 600;
+            margin-bottom: 8px;
+            border-bottom: 1px dotted #ccc;
+            padding-bottom: 2px;
+            min-height: 24px;
+        }
+
+        .record-wrapper {
+            margin-bottom: 30px;
+            padding-top: 20px;
+            border-top: 4px solid #000;
+            page-break-inside: avoid;
+        }
+
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+
+            .btn {
+                display: none !important;
+            }
+
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            a {
+                text-decoration: none;
+                color: black;
+            }
+        }
+
+        .render-target input,
+        .render-target textarea,
+        .render-target select {
+            border: none !important;
+            background: transparent !important;
+            resize: none;
+            overflow: hidden;
+            font-weight: bold;
+            color: #000 !important;
+            padding: 0 !important;
+            width: 100%;
+        }
+
+        .form-actions {
+            display: none !important;
+        }
+
+        input[type="checkbox"]:checked,
+        input[type="radio"]:checked {
+            filter: brightness(0);
+        }
+    </style>
+</head>
+
+<body class="p-4">
+
+    <div class="fixed-top text-end p-3 no-print">
+        <button onclick="window.print()" class="btn btn-primary shadow"><i class="bi bi-printer"></i> Imprimir / Salvar
+            PDF</button>
+        <button onclick="window.close()" class="btn btn-secondary shadow">Fechar</button>
+    </div>
+
+    <div class="text-center mb-4 no-print-border">
+        <img src="{{ url_for('static', filename='img/brasao-pucminas-2025_preto.png') }}" alt="Brasão PUC Minas"
+            class="img-fluid" style="max-height: 120px;">
+    </div>
+
+    <div class="mb-5">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold">PRONTUÁRIO MÉDICO</h2>
+            <small>Data de Emissão: {{ now.strftime('%d/%m/%Y às %H:%M') }}</small>
+        </div>
+
+        <div class="section-header">Dados Pessoais</div>
+        <div class="row">
+            <div class="col-8">
+                <p class="label-field">Nome Completo</p>
+                <div class="value-field">{{ paciente.name }}</div>
+            </div>
+            <div class="col-4">
+                <p class="label-field">ID do Sistema</p>
+                <div class="value-field">{{ paciente.patients_id }}</div>
+            </div>
+
+            <div class="col-3">
+                <p class="label-field">CPF</p>
+                <div class="value-field">{{ paciente.cpf }}</div>
+            </div>
+            <div class="col-3">
+                <p class="label-field">RG</p>
+                <div class="value-field">{{ paciente.rg or '-' }}</div>
+            </div>
+            <div class="col-3">
+                <p class="label-field">Data Nasc.</p>
+                <div class="value-field">{{ paciente.birthday.strftime('%d/%m/%Y') if paciente.birthday else '-' }}
+                </div>
+            </div>
+            <div class="col-3">
+                <p class="label-field">Idade</p>
+                <div class="value-field">
+                    {% if paciente.birthday %}
+                    {{ (now.year - paciente.birthday.year) - (1 if now.month < paciente.birthday.month or
+                        (now.month==paciente.birthday.month and now.day < paciente.birthday.day) else 0) }} anos {% else
+                        %}-{% endif %} </div>
+                </div>
+
+                <div class="col-3">
+                    <p class="label-field">Gênero</p>
+                    <div class="value-field">{{ paciente.gender or '-' }}</div>
+                </div>
+                <div class="col-3">
+                    <p class="label-field">Raça/Cor</p>
+                    <div class="value-field">{{ paciente.race or '-' }}</div>
+                </div>
+                <div class="col-3">
+                    <p class="label-field">Estado Civil</p>
+                    <div class="value-field">{{ paciente.marital_status or '-' }}</div>
+                </div>
+                <div class="col-3">
+                    <p class="label-field">Escolaridade</p>
+                    <div class="value-field">{{ paciente.education_level or '-' }}</div>
+                </div>
+
+                <div class="col-12">
+                    <p class="label-field">Profissão</p>
+                    <div class="value-field">{{ paciente.profession or '-' }}</div>
+                </div>
+            </div>
+
+            <div class="section-header">Contato e Endereço</div>
+            <div class="row">
+                <div class="col-4">
+                    <p class="label-field">Celular/Telefone</p>
+                    <div class="value-field">{{ paciente.number or '-' }}</div>
+                </div>
+                <div class="col-8">
+                    <p class="label-field">E-mail</p>
+                    <div class="value-field">{{ paciente.email or '-' }}</div>
+                </div>
+
+                <div class="col-2">
+                    <p class="label-field">CEP</p>
+                    <div class="value-field">{{ paciente.zip_code or '-' }}</div>
+                </div>
+                <div class="col-5">
+                    <p class="label-field">Endereço</p>
+                    <div class="value-field">{{ paciente.address or '-' }}</div>
+                </div>
+                <div class="col-2">
+                    <p class="label-field">Bairro</p>
+                    <div class="value-field">{{ paciente.neighborhood or '-' }}</div>
+                </div>
+                <div class="col-3">
+                    <p class="label-field">Cidade/UF</p>
+                    <div class="value-field">{{ paciente.city or '-' }} / {{ paciente.state or '-' }}</div>
+                </div>
+            </div>
+
+            <div class="section-header">Dados Clínicos e Administrativos</div>
+            <div class="row">
+                <div class="col-3">
+                    <p class="label-field">Data da Avaliação</p>
+                    <div class="value-field">{{ paciente.evaluation_date.strftime('%d/%m/%Y') if
+                        paciente.evaluation_date else '-' }}</div>
+                </div>
+                <div class="col-3">
+                    <p class="label-field">Data da Alta</p>
+                    <div class="value-field">{{ paciente.discharge_date.strftime('%d/%m/%Y') if paciente.discharge_date
+                        else 'Em tratamento' }}</div>
+                </div>
+                <div class="col-3">
+                    <p class="label-field">Estagiário Responsável</p>
+                    <div class="value-field">{{ paciente.intern.name if paciente.intern else 'Não informado' }}</div>
+                </div>
+                <div class="col-3">
+                    <p class="label-field">Supervisor</p>
+                    <div class="value-field">{{ paciente.supervisor.name if paciente.supervisor else 'Não informado' }}
+                    </div>
+                </div>
+
+                <div class="col-12 mt-2">
+                    <p class="label-field">Observações / Queixa Principal</p>
+                    <div class="border p-2 rounded bg-light" style="min-height: 60px;">
+                        {{ paciente.notes or 'Nenhuma observação registrada.' }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-5">
+            <h3 class="text-center fw-bold mb-4">HISTÓRICO DE ATENDIMENTOS</h3>
+
+            <div id="records-container">
+                {% for record in records %}
+                <div class="record-wrapper">
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="fw-bold m-0 text-uppercase">
+                            <i class="bi bi-file-medical-fill me-2"></i>{{ record.title }}
+                        </h4>
+                        <div class="text-end">
+                            <span class="badge border border-dark text-dark rounded-0" style="font-size: 0.9rem;">
+                                Data: {{ record.date }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 text-muted small fst-italic border-bottom pb-2">
+                        Preenchido por: <strong>{{ record.author }}</strong>
+                        {% if record.updated_at %}
+                        <br>
+                        (Editado em {{ record.updated_at }} por {{ record.updated_by }})
+                        {% endif %}
+                    </div>
+
+                    <textarea class="d-none data-structure">{{ record.structure | tojson }}</textarea>
+                    <textarea class="d-none data-values">{{ record.data | tojson }}</textarea>
+
+                    <form class="render-target"></form>
+                </div>
+                {% else %}
+                <div class="alert alert-secondary text-center">
+                    Nenhum prontuário/atendimento registrado para este paciente.
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <script>
+            $(document).ready(function () {
+                $('.record-wrapper').each(function () {
+                    const $wrapper = $(this);
+
+                    let structure, savedData;
+                    try {
+                        structure = JSON.parse($wrapper.find('.data-structure').val());
+                        savedData = JSON.parse($wrapper.find('.data-values').val());
+                    } catch (e) {
+                        console.error("Erro no JSON:", e);
+                        return;
+                    }
+
+                    const $container = $wrapper.find('.render-target');
+
+                    $container.formRender({
+                        formData: structure
+                    });
+
+                    try {
+                        for (const [key, value] of Object.entries(savedData)) {
+                            let input = $container.find(`[name="${key}"]`);
+
+                            // Checkbox e Radio
+                            if (input.is(':checkbox') || input.is(':radio')) {
+                                if (Array.isArray(value)) {
+                                    value.forEach(val => {
+                                        $container.find(`[name="${key}"][value="${val}"]`).prop('checked', true);
+                                    });
+                                } else {
+                                    $container.find(`[name="${key}"][value="${value}"]`).prop('checked', true);
+                                }
+                            } else {
+                                // Text, Select, Textarea
+                                input.val(value);
+
+                                // Ajuste para Textarea expandir na impressão se tiver muito texto
+                                if (input.is('textarea')) {
+                                    input.height(input[0].scrollHeight);
+                                }
+                            }
+                        }
+                    } catch (e) { console.error("Erro ao preencher dados", e); }
+
+                    $container.find('input, select, textarea').prop('disabled', true);
+
+                    $container.find('.form-actions').remove();
+                });
+            });
+        </script>
+</body>
+
+</html>

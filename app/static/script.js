@@ -157,7 +157,7 @@ if (formNovo) {
 
         let supervisor_id = document.getElementById("supervisor_nome").value;
         let intern_id = document.getElementById("estagiario_nome").value;
-        
+
         let prontuario_id = document.getElementById("prontuarioSelecionado")?.value;
 
         // --- NOVOS CAMPOS DE DATA ---
@@ -166,39 +166,38 @@ if (formNovo) {
 
         let nome = document.getElementById("nome").value;
         let cpf = document.getElementById("cpf").value;
-        let rg = document.getElementById("rg").value; // --- NOVO ---
-        
+        let rg = document.getElementById("rg").value;
+
         let data_nascimento = document.getElementById("data_nascimento").value;
         let celular = document.getElementById("celular").value;
-        // Telefone foi removido
         let email = document.getElementById("email").value;
 
         let genero = document.querySelector("input[name='genero']:checked")?.value || null;
-        let raca_etnia = document.querySelector("input[name='raca_etnia']:checked")?.value || null; 
+        let raca_etnia = document.querySelector("input[name='raca_etnia']:checked")?.value || null;
 
         let situacao_profissional = document.querySelector("input[name='situacao_profissional']:checked")?.value || null;
-        
+
         let estado_civil = document.getElementById("estado_civil").value;
         let escolaridade = document.getElementById("escolaridade").value;
 
         let endereco = document.getElementById("endereco").value;
         let bairro = document.getElementById("bairro")?.value;
-        let cep = document.getElementById("cep")?.value;       // --- NOVO ---
-        let cidade = document.getElementById("cidade").value; 
-        let estado = document.getElementById("estado")?.value; // --- NOVO ---
+        let cep = document.getElementById("cep")?.value;
+        let cidade = document.getElementById("cidade").value;
+        let estado = document.getElementById("estado")?.value;
 
         let situacao_outra_texto = document.getElementById("situacao_outra_texto")?.value || null;
-        
+
         // Lógica para Raça "Outra"
         if (raca_etnia === "Outra") {
             let raca_texto = document.getElementById("raca_outra_texto")?.value;
-            if(raca_texto) raca_etnia = raca_texto;
+            if (raca_texto) raca_etnia = raca_texto;
         }
 
         // Captura do Prontuário Dinâmico
         let prontuario_json = {};
         if ($('#renderedFormContainer').length) {
-             $('#renderedFormContainer').find('input, select, textarea').each(function () {
+            $('#renderedFormContainer').find('input, select, textarea').each(function () {
                 const name = $(this).attr('name');
                 if (name) {
                     if ($(this).is(':radio') && !$(this).is(':checked')) return;
@@ -217,36 +216,36 @@ if (formNovo) {
             intern_id,
             prontuario_id,
             prontuario_json,
-            
+
             data_avaliacao,
-            data_alta,     
-            
+            data_alta,
+
             nome,
             cpf,
-            rg,             
+            rg,
             data_nascimento,
             celular,
             email,
             genero,
-            raca_etnia, 
+            raca_etnia,
             estado_civil,
             escolaridade,
             situacao_profissional,
             endereco,
             bairro,
-            cep,            
-            cidade, 
-            estado,        
+            cep,
+            cidade,
+            estado,
             situacao_outra_texto
         };
 
         try {
             const response = await fetch("/salvarpaciente", {
                 method: "POST",
-                headers: {"Content-Type": "application/json"},
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
             });
-            
+
             const result = await response.json();
 
             if (result.success) {
@@ -331,6 +330,289 @@ if (formEditar) {
         }
     });
 }
+
+window.verDetalhesRecord = function (id) {
+    var modalElement = document.getElementById('modalVerProntuario');
+    var myModal = new bootstrap.Modal(modalElement);
+    myModal.show();
+
+    $('#render-container-modal').html('<div class="text-center py-5"><div class="spinner-border text-primary" role="status"></div><p class="mt-2 text-muted">Carregando prontuário...</p></div>');
+
+    $.ajax({
+        url: '/get_medical_record/' + id,
+        method: 'GET',
+        success: function (response) {
+            if (response.status === 'success') {
+                $('#modalLabel').text(response.title);
+                $('#modalSubtitulo').text('Preenchido em: ' + response.date + ' por ' + response.author);
+
+                const container = $('#render-container-modal');
+                container.empty();
+
+                container.formRender({
+                    formData: response.structure
+                });
+
+                const savedData = response.data;
+                for (const [key, value] of Object.entries(savedData)) {
+                    let input = container.find(`[name="${key}"]`);
+
+                    if (input.is(':checkbox') || input.is(':radio')) {
+                        if (Array.isArray(value)) {
+                            value.forEach(val => {
+                                container.find(`[name="${key}"][value="${val}"]`).prop('checked', true);
+                            });
+                        } else {
+                            container.find(`[name="${key}"][value="${value}"]`).prop('checked', true);
+                        }
+                    } else {
+                        input.val(value);
+                    }
+                }
+
+                // Desabilitar campos para leitura
+                container.find('input, select, textarea').prop('disabled', true);
+                container.find('.form-actions').remove();
+            }
+        },
+        error: function () {
+            $('#render-container-modal').html('<div class="alert alert-danger">Erro ao carregar prontuário.</div>');
+        }
+    });
+};
+
+$(document).ready(function () {
+    // formulário no dropdown
+    $('#selectForm').on('change', function () {
+        const formId = $(this).val();
+        const formText = $("#selectForm option:selected").text();
+
+        if (formId) {
+            $.ajax({
+                url: '/get_form_structure/' + formId,
+                method: 'GET',
+                success: function (response) {
+                    if (response.status === 'success') {
+                        $('#form-render-area').slideDown();
+                        $('#btnSalvar').fadeIn();
+                        $('#form-title-display').text(formText);
+
+                        $('#fb-render').formRender({
+                            formData: response.structure_json
+                        });
+                    }
+                }
+            });
+        }
+    });
+
+    $('#btnSalvar').on('click', function () {
+        const formId = $('#selectForm').val();
+
+        const patientId = $(this).data('patient-id');
+
+        let formData = {};
+
+        // Coleta os dados
+        $('#fb-render').serializeArray().forEach(function (item) {
+            if (formData[item.name]) {
+                if (!Array.isArray(formData[item.name])) {
+                    formData[item.name] = [formData[item.name]];
+                }
+                formData[item.name].push(item.value);
+            } else {
+                formData[item.name] = item.value;
+            }
+        });
+
+        if (!patientId) {
+            alert("Erro: ID do paciente não encontrado.");
+            return;
+        }
+
+        $.ajax({
+            url: '/salvar_atendimento/' + patientId,
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                form_id: formId,
+                record_data: formData
+            }),
+            success: function (response) {
+                alert(response.message);
+                location.reload();
+            },
+            error: function (xhr) {
+                alert('Erro ao salvar: ' + (xhr.responseJSON ? xhr.responseJSON.message : 'Erro desconhecido'));
+            }
+        });
+    });
+
+});
+
+// Variável global para controlar o estado da edição
+let editingRecordId = null;
+
+// Função chamada ao clicar no botão "Editar" na lista
+window.editarRecord = function (recordId, formId) {
+    // 1. Prepara a UI
+    const renderArea = $('#form-render-area');
+    const btnSalvar = $('#btnSalvar');
+
+    // Rola até a área de formulário
+    renderArea[0].scrollIntoView({ behavior: 'smooth' });
+
+    // Mostra indicador de carregamento
+    renderArea.show();
+    renderArea.html('<div class="text-center py-4"><div class="spinner-border text-warning" role="status"></div><p>Carregando prontuário para edição...</p></div>');
+    btnSalvar.hide();
+
+    // Define o select (apenas visual, não dispara o change)
+    $('#selectForm').val(formId);
+
+    // 2. Busca os dados
+    $.ajax({
+        url: '/get_medical_record/' + recordId,
+        method: 'GET',
+        success: function (response) {
+            if (response.status === 'success') {
+                // Limpa completamente a área antes de renderizar
+                renderArea.empty();
+
+                // Adiciona cabeçalho de aviso de edição
+                renderArea.append(`
+                    <div class="alert alert-warning border-warning d-flex justify-content-between align-items-center mb-3">
+                        <span><i class="bi bi-pencil-fill me-2"></i><strong>Modo Edição:</strong> Você está alterando um registro existente de ${response.date}.</span>
+                        <button type="button" class="btn btn-sm btn-outline-dark" onclick="cancelarEdicao()">Cancelar</button>
+                    </div>
+                    <form id="fb-render"></form>
+                `);
+
+                // 3. Renderiza o formulário
+                const formContainer = $('#fb-render');
+                formContainer.formRender({
+                    formData: response.structure
+                });
+
+                // 4. Preenche os campos com os dados salvos
+                const savedData = response.data;
+                try {
+                    for (const [key, value] of Object.entries(savedData)) {
+                        let input = formContainer.find(`[name="${key}"]`);
+
+                        if (input.is(':checkbox') || input.is(':radio')) {
+                            if (Array.isArray(value)) {
+                                value.forEach(val => {
+                                    formContainer.find(`[name="${key}"][value="${val}"]`).prop('checked', true);
+                                });
+                            } else {
+                                formContainer.find(`[name="${key}"][value="${value}"]`).prop('checked', true);
+                            }
+                        } else {
+                            input.val(value);
+                        }
+                    }
+                } catch (err) {
+                    console.error("Erro ao preencher campos:", err);
+                }
+
+                // 5. Configura o botão para modo "Atualizar"
+                btnSalvar
+                    .removeClass('btn-success')
+                    .addClass('btn-warning text-dark')
+                    .html('<i class="bi bi-check-circle-fill"></i> Atualizar Alterações')
+                    .fadeIn();
+
+                // Define o ID globalmente
+                editingRecordId = recordId;
+            }
+        },
+        error: function (xhr) {
+            alert('Erro ao carregar prontuário: ' + (xhr.responseJSON?.message || 'Erro desconhecido'));
+            cancelarEdicao();
+        }
+    });
+};
+
+// Função para cancelar e limpar a tela
+window.cancelarEdicao = function () {
+    editingRecordId = null;
+    $('#form-render-area').hide().empty();
+    $('#form-render-area').html('<form id="fb-render"></form>');
+    $('#selectForm').val(""); // Reseta o select
+
+    // Volta o botão para o estado original
+    $('#btnSalvar')
+        .removeClass('btn-warning text-dark')
+        .addClass('btn-success')
+        .html('<i class="bi bi-check-circle-fill"></i> Salvar Prontuário')
+        .hide();
+};
+
+// --- LOGICA DO BOTÃO SALVAR (ATUALIZADA) ---
+$(document).ready(function () {
+
+    // Mantenha seu código de change do #selectForm aqui...
+    // ...
+
+    // Clique do botão Salvar/Atualizar
+    $('#btnSalvar').off('click').on('click', function (e) {
+        e.preventDefault(); // Previne qualquer envio de formulário padrão
+
+        const btn = $(this);
+        const originalText = btn.html();
+
+        // Desabilita botão para evitar duplo clique
+        btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processando...');
+
+        const formId = $('#selectForm').val();
+        const patientId = btn.data('patient-id'); // Pega do HTML
+
+        // Coleta os dados do formRender
+        let formData = {};
+        $('#fb-render').serializeArray().forEach(function (item) {
+            if (formData[item.name]) {
+                if (!Array.isArray(formData[item.name])) {
+                    formData[item.name] = [formData[item.name]];
+                }
+                formData[item.name].push(item.value);
+            } else {
+                formData[item.name] = item.value;
+            }
+        });
+
+        // Define a URL e Método baseados no modo (Novo ou Edição)
+        let url, payload;
+
+        if (editingRecordId) {
+            // MODO EDIÇÃO
+            url = '/atualizar_atendimento/' + editingRecordId;
+            payload = { record_data: formData };
+        } else {
+            // MODO NOVO
+            url = '/salvar_atendimento/' + patientId;
+            payload = { form_id: formId, record_data: formData };
+        }
+
+        // Envia Ajax
+        $.ajax({
+            url: url,
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(payload),
+            success: function (response) {
+                // Sucesso: Redireciona/Recarrega
+                alert(response.message);
+                window.location.reload();
+            },
+            error: function (xhr) {
+                // Erro: Reabilita o botão e mostra erro
+                alert('Erro: ' + (xhr.responseJSON ? xhr.responseJSON.message : 'Erro desconhecido'));
+                btn.prop('disabled', false).html(originalText);
+            }
+        });
+    });
+});
 
 // Lógica jQuery FormBuilder
 jQuery($ => {

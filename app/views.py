@@ -1,8 +1,9 @@
 from flask import Blueprint, render_template, redirect, url_for, request, jsonify, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
+import json
 from datetime import datetime
 from app.database import db
-from app.models import Paciente, User, Form
+from app.models import Paciente, User, Form, MedicalRecord
 from app.auth import login_required
 
 main = Blueprint('main', __name__)
@@ -24,7 +25,6 @@ def require_login_for_every_page():
         "static"
     }
 
-    # Se o usuário não está logado e tenta acessar alguma rota protegida
     if request.endpoint not in public_endpoints and "user_id" not in session:
         return redirect(url_for("main.login"))
 
@@ -97,7 +97,7 @@ def pacientes():
 
 @main.route('/lista_prontuarios')
 def lista_prontuarios():
-    forms_active = Form.query.all()
+    forms_active = Form.query.filter_by(active=True).all()
     return render_template('lista_prontuarios.html', forms_active=forms_active)
 
 @main.route('/prontuariopaciente')
@@ -152,7 +152,12 @@ def salvar_formulario_route():
         if existing_form:
             return jsonify({"status": "error", "message": f"Já existe um formulário com o título '{form_name}'. Por favor, escolha outro título."}), 409
 
-        new_form = Form(title=form_name, structure_json=form_structure_json)
+        new_form = Form(
+            title=form_name, 
+            structure_json=form_structure_json,
+            author_id=session.get('user_id'),
+            created_at=datetime.utcnow()
+        )
         db.session.add(new_form)
         db.session.commit()
         
@@ -166,8 +171,6 @@ def salvar_formulario_route():
         print(f"Erro ao salvar formulário no banco de dados: {str(e)}")
         return jsonify({"status": "error", "message": "Ocorreu um erro interno ao tentar salvar o formulário"}), 500
 
-
-# EDITAR FORMULÁRIO
 @main.route('/editar_form/<int:form_id>', methods=['GET'])
 def editar_form(form_id):
     form = Form.query.get_or_404(form_id)
@@ -178,7 +181,6 @@ def editar_form(form_id):
         structure_json=form.structure_json
     )
 
-# ATUALIZAR FORMULÁRIO
 @main.route('/atualizar_formulario/<int:form_id>', methods=['POST'])
 def atualizar_formulario(form_id):
     form = Form.query.get_or_404(form_id)
@@ -197,6 +199,8 @@ def atualizar_formulario(form_id):
         # Atualiza os dados
         form.title = form_name
         form.structure_json = form_structure_json
+        form.updated_at = datetime.utcnow()
+        form.updated_by_id = session.get('user_id')
         db.session.commit()
 
         return jsonify({
@@ -208,27 +212,9 @@ def atualizar_formulario(form_id):
         db.session.rollback()
         return jsonify({"status": "error", "message": f"Erro ao atualizar: {str(e)}"}), 500
 
-# PACIENTE
-@main.route("/paciente/<int:id>")
-def visualizar_paciente(id):
-    paciente = Paciente.query.get_or_404(id)
-    return render_template("visualizar_paciente.html", paciente=paciente)
-
 @main.route('/novopaciente')
 def novopaciente():
-
-    available_forms = Form.query.with_entities(Form.forms_id, Form.title).order_by(Form.title).all()
-    form_options = [{"id": form_template.forms_id, "title": form_template.title} for form_template in available_forms]
-
-    supervisors = User.query.filter(User.type_user.in_(["admin", "supervisor"])).all()
-    interns = User.query.filter_by(type_user="intern").all()
-
-    return render_template(
-        'novopaciente.html',
-        form_options=form_options,
-        supervisors=supervisors,
-        interns=interns
-    )
+    return render_template('novopaciente.html')
 
 @main.route('/salvarpaciente', methods=['POST'])
 def salvar_paciente():
@@ -461,26 +447,187 @@ def atualizar_paciente(id):
         db.session.rollback()
         return jsonify({"success": False, "message": str(e)})
 
+@main.route('/paciente/<int:id>')
+def ver_paciente(id):
+    paciente = Paciente.query.get_or_404(id)
+    
+    forms_disponiveis = Form.query.filter_by(active=True).all()
+    
+    historico = MedicalRecord.query.filter_by(patient_id=id).order_by(MedicalRecord.created_at.desc()).all()
+
+    return render_template(
+        'ver_paciente.html', 
+        paciente=paciente, 
+        forms_disponiveis=forms_disponiveis,
+        historico=historico,
+        now=datetime.now()
+    )
+
+@main.route('/salvar_atendimento/<int:patient_id>', methods=['POST'])
+def salvar_atendimento(patient_id):
+    data = request.get_json()
+    
+    if not data:
+        return jsonify({"status": "error", "message": "Dados inválidos"}), 400
+
+    try:
+        form_id = data.get('form_id')
+        record_data = data.get('record_data') # O JSON com as respostas
+        
+        # Pega o ID do usuário logado na sessão
+        author_id = session.get('user_id')
+
+        new_record = MedicalRecord(
+            patient_id=patient_id,
+            form_id=form_id,
+            author_id=author_id,
+            record_data=json.dumps(record_data), # Salva as respostas
+            created_at=datetime.now()
+        )
+
+        db.session.add(new_record)
+        db.session.commit()
+
+        return jsonify({"status": "success", "message": "Atendimento registrado com sucesso!"})
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@main.route('/get_medical_record/<int:record_id>')
+def get_medical_record(record_id):
+    # Busca o registro
+    record = MedicalRecord.query.get_or_404(record_id)
+    
+    # Pega a estrutura do formulário original
+    form_structure = record.form.structure_json
+    
+    # Pega os dados salvos (respostas)
+    # Como salvamos como string JSON no banco, não precisamos de json.dumps aqui se for enviar direto,
+    # mas o jsonify espera objetos Python, então vamos carregar a string para objeto se necessário.
+    try:
+        saved_data = json.loads(record.record_data)
+    except:
+        saved_data = record.record_data # Caso já esteja em formato compatível ou ocorra erro
+
+    return jsonify({
+        "status": "success",
+        "structure": form_structure,
+        "data": saved_data,
+        "title": record.form.title,
+        "date": record.created_at.strftime('%d/%m/%Y às %H:%M'),
+        "author": record.author.name if record.author else "Desconhecido"
+    })
+
+@main.route('/atualizar_atendimento/<int:record_id>', methods=['POST'])
+def atualizar_atendimento(record_id):
+    try:
+        record = MedicalRecord.query.get_or_404(record_id)
+        data = request.get_json()
+
+        if not data:
+            return jsonify({"status": "error", "message": "Nenhum dado recebido"}), 400
+
+        record_data = data.get('record_data')
+        record.record_data = json.dumps(record_data)
+        
+        # --- SALVANDO INFORMAÇÕES DE EDIÇÃO ---
+        record.updated_at = datetime.now() # Salva a hora atual
+        record.updated_by_id = session.get('user_id') # Salva quem está logado agora
+        
+        db.session.commit()
+
+        return jsonify({"status": "success", "message": "Prontuário atualizado com sucesso!"}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@main.route('/excluir_atendimento/<int:record_id>')
+def excluir_atendimento(record_id):
+    try:
+        record = MedicalRecord.query.get_or_404(record_id)
+        patient_id = record.patient_id # Salva ID para redirecionar depois
+        
+        db.session.delete(record)
+        db.session.commit()
+        
+        flash("Atendimento excluído com sucesso!", "success")
+        return redirect(url_for('main.ver_paciente', id=patient_id))
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Erro ao excluir: {str(e)}", "danger")
+        return redirect(url_for('main.homepage'))
+
+@main.route('/imprimir_paciente/<int:id>')
+def imprimir_paciente(id):
+    paciente = Paciente.query.get_or_404(id)
+
+    records_db = MedicalRecord.query.filter_by(patient_id=id).order_by(MedicalRecord.created_at.desc()).all()
+
+    records_processed = []
+    
+    for rec in records_db:
+        try:
+            structure = json.loads(rec.form.structure_json)
+            data = json.loads(rec.record_data)
+        except Exception as e:
+            print(f"Erro ao fazer parse do JSON do record {rec.id}: {e}")
+            structure = []
+            data = {}
+
+        records_processed.append({
+            "id": rec.id,
+            "title": rec.form.title,
+            "date": rec.created_at.strftime('%d/%m/%Y às %H:%M'),
+            "author": rec.author.name if rec.author else "Sistema",
+            "updated_at": rec.updated_at.strftime('%d/%m/%Y às %H:%M') if rec.updated_at else None,
+            "updated_by": rec.updated_by.name if rec.updated_by else None,
+            "structure": structure, 
+            "data": data         
+        })
+
+    return render_template(
+        'imprimir_paciente.html', 
+        paciente=paciente, 
+        records=records_processed,
+        now=datetime.now()
+    )
+
 # GET FORM JSON
 @main.route('/get_form_structure/<int:form_id>')
 def get_form_structure(form_id):
-    form_template = Form.query.get_or_404(form_id)
-    if form_template and form_template.structure_json:
-        return jsonify({
-            "status": "success",
-            "form_id": form_template.forms_id,
-            "title": form_template.title,
-            "structure_json": form_template.structure_json 
-        })
-    return jsonify({"status": "error", "message": "A estrutura desse formulário não foi encontrada"}), 404
+    try:
+        form_template = Form.query.get_or_404(form_id)
+        if form_template and form_template.structure_json:
+            return jsonify({
+                "status": "success",
+                "form_id": form_template.forms_id,
+                "title": form_template.title,
+                "structure_json": form_template.structure_json 
+            })
+        return jsonify({"status": "error", "message": "A estrutura desse formulário não foi encontrada"}), 404
+    except Exception as e:
+        print(f"Erro em get_form_structure: {e}")
+        return jsonify({"status": "error", "message": "Erro interno do servidor"}), 500
 
 @main.route('/excluir_form/<int:form_id>', methods=['POST'])
 def excluir_form(form_id):
     form = Form.query.get_or_404(form_id)
     try:
-        db.session.delete(form)
-        db.session.commit()
+        tem_uso = MedicalRecord.query.filter_by(form_id=form_id).first()
+
+        if tem_uso:
+            form.active = False
+            db.session.commit()
+            flash("Formulário arquivado com sucesso! (Ele foi mantido no histórico pois já possui registros)", "warning")
+        else:
+            db.session.delete(form)
+            db.session.commit()
+            flash("Formulário excluído permanentemente.", "success")
+            
         return redirect(url_for('main.lista_prontuarios'))
+
     except Exception as e:
         db.session.rollback()
         return f"Erro ao excluir formulário: {str(e)}", 500

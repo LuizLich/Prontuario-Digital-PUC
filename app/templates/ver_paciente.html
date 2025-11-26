@@ -1,0 +1,382 @@
+{% extends 'base.html' %}
+
+{% block title %}Prontuário de {{ paciente.name }}{% endblock %}
+{% block content %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://formbuilder.online/assets/js/form-render.min.js"></script>
+
+<section>
+    <div class="container py-5">
+
+        <div class="card border mb-4 shadow-sm overflow-hidden rounded-3">
+
+            <div
+                class="card-header bg-primary bg-gradient text-white p-4 d-flex justify-content-between align-items-center">
+
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-white text-primary rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                        style="width: 50px; height: 50px;">
+                        <i class="bi bi-person-fill fs-3"></i>
+                    </div>
+                    <div>
+                        <h4 class="mb-0 fw-bold">{{ paciente.name }}</h4>
+                        <div class="d-flex align-items-center gap-2">
+                            <small class="text-white-50">Dados do paciente</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column align-items-end gap-2">
+                    <a href="{{ url_for('main.editar_paciente', id=paciente.patients_id) }}"
+                        class="btn btn-light btn-sm fw-bold text-primary shadow-sm px-3">
+                        <i class="bi bi-pencil-square me-1"></i> Editar Dados
+                    </a>
+
+                    <a href="{{ url_for('main.imprimir_paciente', id=paciente.patients_id) }}" target="_blank"
+                        class="btn btn-outline-light btn-sm fw-bold shadow-sm px-3">
+                        <i class="bi bi-printer-fill me-1"></i> Imprimir Tudo
+                    </a>
+
+                    <div class="d-flex gap-2">
+                        <span class="badge bg-white bg-opacity-25 text-white border border-white border-opacity-25">ID:
+                            {{ paciente.patients_id }}</span>
+                        <span class="badge bg-white bg-opacity-25 text-white border border-white border-opacity-25">{{
+                            paciente.gender }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-0">
+
+                <div class="card-body p-0">
+                    <ul class="nav nav-tabs nav-justified bg-light px-3 pt-3 border-bottom-0" id="patientTab"
+                        role="tablist">
+
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="dados-pessoais-tab" data-bs-toggle="tab"
+                                data-bs-target="#dados-pessoais" type="button">
+                                <i class="bi bi-person-vcard me-2"></i>Dados Pessoais
+                            </button>
+                        </li>
+
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="endereco-tab" data-bs-toggle="tab" data-bs-target="#endereco"
+                                type="button">
+                                <i class="bi bi-geo-alt me-2"></i>Endereço e Contato
+                            </button>
+                        </li>
+
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="clinico-tab" data-bs-toggle="tab" data-bs-target="#clinico"
+                                type="button">
+                                <i class="bi bi-activity me-2"></i>Dados Clínicos
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content p-4 bg-white border-top" id="patientTabContent">
+
+                        <div class="tab-pane fade show active" id="dados-pessoais">
+                            <div class="row g-4">
+                                <div class="col-md-3 col-6">
+                                    <small class="text-muted text-uppercase fw-bold"
+                                        style="font-size: 0.75rem;">CPF</small>
+                                    <div class="fs-6 fw-bold text-dark border-bottom pb-1">{{ paciente.cpf }}</div>
+                                </div>
+
+                                <div class="col-md-3 col-6">
+                                    <small class="text-muted text-uppercase fw-bold"
+                                        style="font-size: 0.75rem;">RG</small>
+                                    <div class="fs-6 fw-bold text-dark border-bottom pb-1">{{ paciente.rg or '-' }}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3 col-6">
+                                    <small class="text-muted text-uppercase fw-bold"
+                                        style="font-size: 0.75rem;">Nascimento</small>
+                                    <div class="fs-6 fw-bold text-dark border-bottom pb-1">{{
+                                        paciente.birthday.strftime('%d/%m/%Y') if paciente.birthday else '-' }}</div>
+                                </div>
+
+                                <div class="col-md-3 col-6">
+                                    <small class="text-muted text-uppercase fw-bold"
+                                        style="font-size: 0.75rem;">Idade</small>
+                                    <div class="fs-6 fw-bold text-dark border-bottom pb-1">
+                                        {% if paciente.birthday %}
+                                        {{ (now.year - paciente.birthday.year) - (1 if now.month <
+                                            paciente.birthday.month or (now.month==paciente.birthday.month and now.day <
+                                            paciente.birthday.day) else 0) }} anos {% else %}-{% endif %} </div>
+                                    </div>
+                                    <div class="col-md-3 col-6">
+                                        <small class="text-muted text-uppercase fw-bold"
+                                            style="font-size: 0.75rem;">Raça/Cor</small>
+                                        <div class="fs-6 fw-bold text-dark border-bottom pb-1">{{ paciente.race or '-'
+                                            }}</div>
+                                    </div>
+                                    <div class="col-md-3 col-6">
+                                        <small class="text-muted text-uppercase fw-bold"
+                                            style="font-size: 0.75rem;">Estado Civil</small>
+                                        <div class="fs-6 fw-bold text-dark border-bottom pb-1">{{
+                                            paciente.marital_status or '-' }}</div>
+                                    </div>
+                                    <div class="col-md-3 col-6">
+                                        <small class="text-muted text-uppercase fw-bold"
+                                            style="font-size: 0.75rem;">Profissão</small>
+                                        <div class="fs-6 fw-bold text-dark border-bottom pb-1">{{ paciente.profession or
+                                            '-' }}</div>
+                                    </div>
+                                    <div class="col-md-3 col-6">
+                                        <small class="text-muted text-uppercase fw-bold"
+                                            style="font-size: 0.75rem;">Escolaridade</small>
+                                        <div class="fs-6 fw-bold text-dark border-bottom pb-1">{{
+                                            paciente.education_level or '-' }}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" id="endereco">
+                                <div class="row g-4">
+                                    <div class="col-md-4">
+                                        <small class="text-muted text-uppercase fw-bold"
+                                            style="font-size: 0.75rem;">Celular</small>
+                                        <div class="fs-6 fw-bold text-dark border-bottom pb-1"><i
+                                                class="bi bi-whatsapp text-success me-1"></i> {{ paciente.number }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <small class="text-muted text-uppercase fw-bold"
+                                            style="font-size: 0.75rem;">Email</small>
+                                        <div class="fs-6 fw-bold text-dark border-bottom pb-1">{{ paciente.email or '-'
+                                            }}</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <small class="text-muted text-uppercase fw-bold"
+                                            style="font-size: 0.75rem;">CEP</small>
+                                        <div class="fs-6 fw-bold text-dark border-bottom pb-1">{{ paciente.zip_code or
+                                            '-' }}</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <small class="text-muted text-uppercase fw-bold"
+                                            style="font-size: 0.75rem;">Endereço</small>
+                                        <div class="fs-6 fw-bold text-dark border-bottom pb-1">{{ paciente.address or
+                                            '-' }}</div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <small class="text-muted text-uppercase fw-bold"
+                                            style="font-size: 0.75rem;">Bairro</small>
+                                        <div class="fs-6 fw-bold text-dark border-bottom pb-1">{{ paciente.neighborhood
+                                            or '-' }}</div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <small class="text-muted text-uppercase fw-bold"
+                                            style="font-size: 0.75rem;">Cidade/UF</small>
+                                        <div class="fs-6 fw-bold text-dark border-bottom pb-1">{{ paciente.city or '-'
+                                            }} / {{ paciente.state or '-' }}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" id="clinico">
+                                <div class="row g-4">
+                                    <div class="col-md-3 col-6">
+                                        <small class="text-muted text-uppercase fw-bold"
+                                            style="font-size: 0.75rem;">Avaliação</small>
+                                        <div class="fs-6 fw-bold text-dark border-bottom pb-1">{{
+                                            paciente.evaluation_date.strftime('%d/%m/%Y') if paciente.evaluation_date
+                                            else '-' }}</div>
+                                    </div>
+                                    <div class="col-md-3 col-6">
+                                        <small class="text-muted text-uppercase fw-bold"
+                                            style="font-size: 0.75rem;">Alta</small>
+                                        <div class="fs-6 fw-bold text-dark border-bottom pb-1">
+                                            {% if paciente.discharge_date %}
+                                            {{ paciente.discharge_date.strftime('%d/%m/%Y') }}
+                                            {% else %}
+                                            <span class="text-success">Em tratamento</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-6">
+                                        <small class="text-muted text-uppercase fw-bold"
+                                            style="font-size: 0.75rem;">Estagiário</small>
+                                        <div class="fs-6 fw-bold text-dark border-bottom pb-1">{{ paciente.intern.name
+                                            if paciente.intern else 'Não atribuído' }}</div>
+                                    </div>
+                                    <div class="col-md-3 col-6">
+                                        <small class="text-muted text-uppercase fw-bold"
+                                            style="font-size: 0.75rem;">Supervisor</small>
+                                        <div class="fs-6 fw-bold text-dark border-bottom pb-1">{{
+                                            paciente.supervisor.name if paciente.supervisor else 'Não atribuído' }}
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <small class="text-muted text-uppercase fw-bold"
+                                            style="font-size: 0.75rem;">Observações</small>
+                                        <div class="p-3 bg-light border rounded mt-1">
+                                            <p class="mb-0 text-secondary fst-italic">
+                                                {{ paciente.notes or 'Nenhuma observação registrada.' }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-lg-4">
+                        <div class="card border shadow-sm h-100">
+                            <div class="card-header bg-white border-bottom pt-4 pb-2">
+                                <h5 class="mb-0 fw-bold text-secondary"><i
+                                        class="bi bi-clock-history me-2"></i>Prontuários atribuídos</h5>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="list-group list-group-flush">
+                                    {% for record in historico %}
+                                    <div class="list-group-item py-3 px-4 border-bottom">
+                                        <div class="d-flex w-100 justify-content-between align-items-center mb-2">
+                                            <h6 class="mb-0 fw-bold text-primary text-truncate" style="max-width: 70%;"
+                                                title="{{ record.form.title }}">
+                                                {{ record.form.title }}
+                                            </h6>
+                                            <span class="badge bg-light text-secondary border">{{
+                                                record.created_at.strftime('%d/%m') }}</span>
+                                        </div>
+
+                                        <small class="text-muted d-block">
+                                            <i class="bi bi-person-fill me-1"></i> Criado por: {{ record.author.name if
+                                            record.author else 'Sistema' }}
+                                        </small>
+
+                                        {% if record.updated_at %}
+                                        <small class="text-muted d-block fst-italic mt-1" style="font-size: 0.75rem;">
+                                            <i class="bi bi-pencil-fill me-1"></i>
+                                            Editado em {{ record.updated_at.strftime('%d/%m/%y às %H:%M') }}
+                                            por {{ record.updated_by.name if record.updated_by else 'Desconhecido' }}
+                                        </small>
+                                        {% endif %}
+
+                                        <div class="mb-3"></div>
+
+                                        <div class="btn-group w-100" role="group">
+                                            <button type="button" class="btn btn-outline-primary btn-sm"
+                                                onclick="verDetalhesRecord('{{ record.id }}')">
+                                                <i class="bi bi-eye"></i> Ver
+                                            </button>
+
+                                            <button type="button" class="btn btn-outline-warning btn-sm"
+                                                onclick="editarRecord('{{ record.id }}', '{{ record.form_id }}')">
+                                                <i class="bi bi-pencil"></i> Editar
+                                            </button>
+
+
+
+                                            <a href="{{ url_for('main.excluir_atendimento', record_id=record.id) }}"
+                                                class="btn btn-outline-danger btn-sm"
+                                                onclick="return confirm('Tem certeza que deseja apagar este prontuário permanentemente?');">
+                                                <i class="bi bi-trash"></i> Excluir
+                                            </a>
+                                        </div>
+                                    </div>
+                                    {% else %}
+                                    <div class="text-center py-5 text-muted">
+                                        <i class="bi bi-folder-x fs-1 d-block mb-2 opacity-50"></i>
+                                        Nenhum prontuário atribuído.
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-8">
+                        <div class="card border shadow-sm h-100">
+                            <div class="card-header bg-success bg-gradient text-white p-3 border-bottom-0">
+                                <h5 class="mb-0"><i class="bi bi-clipboard-plus me-2"></i>Atribuir Novo Prontuário</h5>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="mb-4">
+                                    <label for="selectForm"
+                                        class="form-label fw-bold text-secondary text-uppercase small">Selecione o
+                                        modelo de prontuário:</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border"><i
+                                                class="bi bi-file-medical"></i></span>
+                                        <select class="form-select form-select-lg border" id="selectForm">
+                                            <option value="" selected disabled>-- Clique para selecionar --</option>
+                                            {% for form in forms_disponiveis %}
+                                            <option value="{{ form.forms_id }}">{{ form.title }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div id="form-render-area" class="border rounded bg-light p-4 mb-4 position-relative"
+                                    style="display:none;">
+                                    <span
+                                        class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-secondary shadow-sm"
+                                        id="form-title-display"></span>
+                                    <div class="mt-2">
+                                        <form id="fb-render"></form>
+                                    </div>
+                                </div>
+
+                                <div class="d-grid">
+                                    <button type="button" class="btn btn-success btn-lg shadow-sm" id="btnSalvar"
+                                        data-patient-id="{{ paciente.patients_id }}" style="display:none;">
+                                        <i class="bi bi-check-lg me-2"></i>Salvar Atendimento
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modalVerProntuario" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                    <div class="modal-content border-0 shadow">
+                        <div class="modal-header bg-primary text-white border-bottom">
+                            <div>
+                                <h5 class="modal-title fw-bold" id="modalLabel">Detalhes do Atendimento</h5>
+                                <small id="modalSubtitulo" class="text-white-50 opacity-75"></small>
+                            </div>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body bg-white p-4">
+                            <div id="render-container-modal">Carregando informações...</div>
+                        </div>
+                        <div class="modal-footer bg-light border-top">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                            <button type="button" class="btn btn-outline-primary" onclick="window.print()">
+                                <i class="bi bi-printer me-1"></i> Imprimir
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+</section>
+
+
+<style>
+    .nav-tabs .nav-link {
+        color: #6c757d;
+        border: 1px solid transparent;
+        transition: all 0.2s;
+    }
+
+    .nav-tabs .nav-link:hover {
+        background-color: #e9ecef;
+        color: #0d6efd;
+    }
+
+    .nav-tabs .nav-link.active {
+        color: #0d6efd !important;
+        background-color: #fff;
+        font-weight: bold;
+        border-color: #dee2e6 #dee2e6 #fff !important;
+        border-top: 3px solid #0d6efd !important;
+    }
+</style>
+{% endblock %}
