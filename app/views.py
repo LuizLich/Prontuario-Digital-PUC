@@ -214,7 +214,14 @@ def atualizar_formulario(form_id):
 
 @main.route('/novopaciente')
 def novopaciente():
-    return render_template('novopaciente.html')
+    supervisors = User.query.filter(User.type_user.in_(["admin", "supervisor"])).all()
+    interns = User.query.filter_by(type_user="intern").all()
+
+    return render_template(
+        'novopaciente.html',
+        supervisors=supervisors,
+        interns=interns
+    )
 
 @main.route('/salvarpaciente', methods=['POST'])
 def salvar_paciente():
